@@ -42,11 +42,11 @@ def main():
 #    )
 
     logitech_brio = Gst.parse_launch(
-        "srtsrc uri=srt://192.168.1.3:" + Logitech_Brio_Port + "?mode=listener&latency=200 ! jpegdec ! autovideosink"
+        "srtsrc uri=srt://192.168.1.3:" + Logitech_Brio_Port + "?mode=listener&latency=200 ! jpegparse ! jpegdec ! autovideosink"
     )
     
     arducam1 = Gst.parse_launch(
-        "srtsrc uri=srt://192.168.1.3:" + Aduacam_Port + "?mode=listener&latency=200 ! jpegdec ! autovideosink"
+        "srtsrc uri=srt://192.168.1.3:" + Aduacam_Port + "?mode=listener&latency=200 ! decodebin ! autovideosink"
     )
 
     logitech_brio.set_state(Gst.State.PLAYING)
