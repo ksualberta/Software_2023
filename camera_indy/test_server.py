@@ -6,9 +6,9 @@ from gi.repository import Gst, GLib
 Gst.init(None)
 
 pipeline = None
-Logitech_Brio_ID = "/dev/video/2"
+Logitech_Brio_ID = "4"
 Logitech_Brio_Port = "7060"
-Aduacam_ID = "/dev/video/4"
+Aduacam_ID = "2"
 Aduacam_Port = "7050"  
 
 
