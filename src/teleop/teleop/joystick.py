@@ -7,7 +7,7 @@ import pygame
 class JoystickNode(Node):
     def __init__(self):
         super().__init__('joystick_node')
-        rclpy.create_node(Joy,'joystick_cmds', 10)
+        self.create_publisher(Joy,'joystick_cmds', 10)
 
         pygame.init()
         pygame.joystick.init()
