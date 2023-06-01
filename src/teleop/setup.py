@@ -20,7 +20,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            "teleop_node = teleop.joystick.py:main"
+            "teleop_node = teleop.joystick:main"
         ],
     },
 )
