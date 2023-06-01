@@ -11,15 +11,31 @@ class JoystickNode(Node):
 
         pygame.init()
         pygame.joystick.init()
-
-
+            
         timer_period = 0.5
         self.timer = self.create_timer(timer_period, self.timer_callback)
 
     def timer_callback(self):
 
+        pygame.joystick.quit()
+        pygame.joystick.init()
+
+        if pygame.joystick.get_count() > 0:
+
+            self.joystick = pygame.joystick.Joystick(0)
+            self.joystick.init
+        else:
+
+            self.joystick = None
+            self.get_logger().warn('No Joystick Detected')
+            return
+
+        
         joy_msg = Joy()
 
+        joy_msg.header.stamp = self.get_clock().now().to_msg()
+        joy_msg.axes = [self.joystick.get_axis(i) for i in range(self.joystick.get_numaxes())]
+        joy_msg.buttons = [self.joystick.get_button(i) for i in range(self.joystick.get_numbuttons())]
         # Implement Joy Messages and controller input
 
         self.publisher.publish(joy_msg)
