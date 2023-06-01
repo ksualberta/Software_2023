@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /home/abhinavparbhakar/SPEAR/Software_2023/install/arm_control/lib/python3.10/site-packages/arm_control/arm_control_node.py
 /home/abhinavparbhakar/SPEAR/Software_2023/install/arm_control/lib/python3.10/site-packages/arm_control/__init__.py
 /home/abhinavparbhakar/SPEAR/Software_2023/install/arm_control/lib/python3.10/site-packages/arm_control/__pycache__/arm_control_node.cpython-310.pyc
@@ -12,3 +13,19 @@
 /home/abhinavparbhakar/SPEAR/Software_2023/install/arm_control/lib/python3.10/site-packages/arm_control-0.0.0-py3.10.egg-info/requires.txt
 /home/abhinavparbhakar/SPEAR/Software_2023/install/arm_control/lib/python3.10/site-packages/arm_control-0.0.0-py3.10.egg-info/zip-safe
 /home/abhinavparbhakar/SPEAR/Software_2023/install/arm_control/lib/arm_control/arm_node
+=======
+/home/indy03/Desktop/Software_2023/install/arm_control/lib/python3.10/site-packages/arm_control/arm_control_node.py
+/home/indy03/Desktop/Software_2023/install/arm_control/lib/python3.10/site-packages/arm_control/__init__.py
+/home/indy03/Desktop/Software_2023/install/arm_control/lib/python3.10/site-packages/arm_control/__pycache__/arm_control_node.cpython-310.pyc
+/home/indy03/Desktop/Software_2023/install/arm_control/lib/python3.10/site-packages/arm_control/__pycache__/__init__.cpython-310.pyc
+/home/indy03/Desktop/Software_2023/install/arm_control/share/ament_index/resource_index/packages/arm_control
+/home/indy03/Desktop/Software_2023/install/arm_control/share/arm_control/package.xml
+/home/indy03/Desktop/Software_2023/install/arm_control/lib/python3.10/site-packages/arm_control-0.0.0-py3.10.egg-info/dependency_links.txt
+/home/indy03/Desktop/Software_2023/install/arm_control/lib/python3.10/site-packages/arm_control-0.0.0-py3.10.egg-info/PKG-INFO
+/home/indy03/Desktop/Software_2023/install/arm_control/lib/python3.10/site-packages/arm_control-0.0.0-py3.10.egg-info/zip-safe
+/home/indy03/Desktop/Software_2023/install/arm_control/lib/python3.10/site-packages/arm_control-0.0.0-py3.10.egg-info/entry_points.txt
+/home/indy03/Desktop/Software_2023/install/arm_control/lib/python3.10/site-packages/arm_control-0.0.0-py3.10.egg-info/top_level.txt
+/home/indy03/Desktop/Software_2023/install/arm_control/lib/python3.10/site-packages/arm_control-0.0.0-py3.10.egg-info/requires.txt
+/home/indy03/Desktop/Software_2023/install/arm_control/lib/python3.10/site-packages/arm_control-0.0.0-py3.10.egg-info/SOURCES.txt
+/home/indy03/Desktop/Software_2023/install/arm_control/lib/arm_control/arm_node
+>>>>>>> refs/remotes/origin/main
