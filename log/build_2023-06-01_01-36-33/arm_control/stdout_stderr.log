@@ -1,0 +1,37 @@
+running egg_info
+creating ../../build/arm_control/arm_control.egg-info
+writing ../../build/arm_control/arm_control.egg-info/PKG-INFO
+writing dependency_links to ../../build/arm_control/arm_control.egg-info/dependency_links.txt
+writing entry points to ../../build/arm_control/arm_control.egg-info/entry_points.txt
+writing requirements to ../../build/arm_control/arm_control.egg-info/requires.txt
+writing top-level names to ../../build/arm_control/arm_control.egg-info/top_level.txt
+writing manifest file '../../build/arm_control/arm_control.egg-info/SOURCES.txt'
+reading manifest file '../../build/arm_control/arm_control.egg-info/SOURCES.txt'
+writing manifest file '../../build/arm_control/arm_control.egg-info/SOURCES.txt'
+running build
+running build_py
+creating /home/abhinavparbhakar/SPEAR/Software_2023/build/arm_control/build
+creating /home/abhinavparbhakar/SPEAR/Software_2023/build/arm_control/build/lib
+creating /home/abhinavparbhakar/SPEAR/Software_2023/build/arm_control/build/lib/arm_control
+copying arm_control/arm_control_node.py -> /home/abhinavparbhakar/SPEAR/Software_2023/build/arm_control/build/lib/arm_control
+copying arm_control/__init__.py -> /home/abhinavparbhakar/SPEAR/Software_2023/build/arm_control/build/lib/arm_control
+running install
+/usr/lib/python3/dist-packages/setuptools/command/install.py:34: SetuptoolsDeprecationWarning: setup.py install is deprecated. Use build and pip and other standards-based tools.
+  warnings.warn(
+running install_lib
+creating /home/abhinavparbhakar/SPEAR/Software_2023/install/arm_control/lib/python3.10/site-packages/arm_control
+copying /home/abhinavparbhakar/SPEAR/Software_2023/build/arm_control/build/lib/arm_control/arm_control_node.py -> /home/abhinavparbhakar/SPEAR/Software_2023/install/arm_control/lib/python3.10/site-packages/arm_control
+copying /home/abhinavparbhakar/SPEAR/Software_2023/build/arm_control/build/lib/arm_control/__init__.py -> /home/abhinavparbhakar/SPEAR/Software_2023/install/arm_control/lib/python3.10/site-packages/arm_control
+byte-compiling /home/abhinavparbhakar/SPEAR/Software_2023/install/arm_control/lib/python3.10/site-packages/arm_control/arm_control_node.py to arm_control_node.cpython-310.pyc
+byte-compiling /home/abhinavparbhakar/SPEAR/Software_2023/install/arm_control/lib/python3.10/site-packages/arm_control/__init__.py to __init__.cpython-310.pyc
+running install_data
+creating /home/abhinavparbhakar/SPEAR/Software_2023/install/arm_control/share/ament_index
+creating /home/abhinavparbhakar/SPEAR/Software_2023/install/arm_control/share/ament_index/resource_index
+creating /home/abhinavparbhakar/SPEAR/Software_2023/install/arm_control/share/ament_index/resource_index/packages
+copying resource/arm_control -> /home/abhinavparbhakar/SPEAR/Software_2023/install/arm_control/share/ament_index/resource_index/packages
+copying package.xml -> /home/abhinavparbhakar/SPEAR/Software_2023/install/arm_control/share/arm_control
+running install_egg_info
+Copying ../../build/arm_control/arm_control.egg-info to /home/abhinavparbhakar/SPEAR/Software_2023/install/arm_control/lib/python3.10/site-packages/arm_control-0.0.0-py3.10.egg-info
+running install_scripts
+Installing arm_node script to /home/abhinavparbhakar/SPEAR/Software_2023/install/arm_control/lib/arm_control
+writing list of installed files to '/home/abhinavparbhakar/SPEAR/Software_2023/build/arm_control/install.log'

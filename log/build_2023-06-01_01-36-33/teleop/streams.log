@@ -1,0 +1,39 @@
+[2.269s] Invoking command in '/home/abhinavparbhakar/SPEAR/Software_2023/src/teleop': PYTHONPATH=/home/abhinavparbhakar/SPEAR/Software_2023/build/teleop/prefix_override:/home/abhinavparbhakar/SPEAR/Software_2023/install/teleop/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base ../../build/teleop build --build-base /home/abhinavparbhakar/SPEAR/Software_2023/build/teleop/build install --record /home/abhinavparbhakar/SPEAR/Software_2023/build/teleop/install.log --single-version-externally-managed
+[2.947s] running egg_info
+[2.949s] creating ../../build/teleop/teleop.egg-info
+[2.952s] writing ../../build/teleop/teleop.egg-info/PKG-INFO
+[2.952s] writing dependency_links to ../../build/teleop/teleop.egg-info/dependency_links.txt
+[2.952s] writing entry points to ../../build/teleop/teleop.egg-info/entry_points.txt
+[2.952s] writing requirements to ../../build/teleop/teleop.egg-info/requires.txt
+[2.953s] writing top-level names to ../../build/teleop/teleop.egg-info/top_level.txt
+[2.953s] writing manifest file '../../build/teleop/teleop.egg-info/SOURCES.txt'
+[2.959s] reading manifest file '../../build/teleop/teleop.egg-info/SOURCES.txt'
+[2.961s] writing manifest file '../../build/teleop/teleop.egg-info/SOURCES.txt'
+[2.962s] running build
+[2.962s] running build_py
+[2.965s] creating /home/abhinavparbhakar/SPEAR/Software_2023/build/teleop/build
+[2.966s] creating /home/abhinavparbhakar/SPEAR/Software_2023/build/teleop/build/lib
+[2.966s] creating /home/abhinavparbhakar/SPEAR/Software_2023/build/teleop/build/lib/teleop
+[2.967s] copying teleop/joystick.py -> /home/abhinavparbhakar/SPEAR/Software_2023/build/teleop/build/lib/teleop
+[2.969s] copying teleop/__init__.py -> /home/abhinavparbhakar/SPEAR/Software_2023/build/teleop/build/lib/teleop
+[2.970s] running install
+[2.971s] /usr/lib/python3/dist-packages/setuptools/command/install.py:34: SetuptoolsDeprecationWarning: setup.py install is deprecated. Use build and pip and other standards-based tools.
+[2.972s]   warnings.warn(
+[2.977s] running install_lib
+[2.977s] creating /home/abhinavparbhakar/SPEAR/Software_2023/install/teleop/lib/python3.10/site-packages/teleop
+[2.978s] copying /home/abhinavparbhakar/SPEAR/Software_2023/build/teleop/build/lib/teleop/joystick.py -> /home/abhinavparbhakar/SPEAR/Software_2023/install/teleop/lib/python3.10/site-packages/teleop
+[2.979s] copying /home/abhinavparbhakar/SPEAR/Software_2023/build/teleop/build/lib/teleop/__init__.py -> /home/abhinavparbhakar/SPEAR/Software_2023/install/teleop/lib/python3.10/site-packages/teleop
+[2.982s] byte-compiling /home/abhinavparbhakar/SPEAR/Software_2023/install/teleop/lib/python3.10/site-packages/teleop/joystick.py to joystick.cpython-310.pyc
+[2.985s] byte-compiling /home/abhinavparbhakar/SPEAR/Software_2023/install/teleop/lib/python3.10/site-packages/teleop/__init__.py to __init__.cpython-310.pyc
+[2.985s] running install_data
+[2.988s] creating /home/abhinavparbhakar/SPEAR/Software_2023/install/teleop/share/ament_index
+[2.988s] creating /home/abhinavparbhakar/SPEAR/Software_2023/install/teleop/share/ament_index/resource_index
+[2.988s] creating /home/abhinavparbhakar/SPEAR/Software_2023/install/teleop/share/ament_index/resource_index/packages
+[2.990s] copying resource/teleop -> /home/abhinavparbhakar/SPEAR/Software_2023/install/teleop/share/ament_index/resource_index/packages
+[2.991s] copying package.xml -> /home/abhinavparbhakar/SPEAR/Software_2023/install/teleop/share/teleop
+[2.991s] running install_egg_info
+[2.999s] Copying ../../build/teleop/teleop.egg-info to /home/abhinavparbhakar/SPEAR/Software_2023/install/teleop/lib/python3.10/site-packages/teleop-0.0.0-py3.10.egg-info
+[3.003s] running install_scripts
+[3.073s] Installing teleop_node script to /home/abhinavparbhakar/SPEAR/Software_2023/install/teleop/lib/teleop
+[3.074s] writing list of installed files to '/home/abhinavparbhakar/SPEAR/Software_2023/build/teleop/install.log'
+[3.165s] Invoked command in '/home/abhinavparbhakar/SPEAR/Software_2023/src/teleop' returned '0': PYTHONPATH=/home/abhinavparbhakar/SPEAR/Software_2023/build/teleop/prefix_override:/home/abhinavparbhakar/SPEAR/Software_2023/install/teleop/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base ../../build/teleop build --build-base /home/abhinavparbhakar/SPEAR/Software_2023/build/teleop/build install --record /home/abhinavparbhakar/SPEAR/Software_2023/build/teleop/install.log --single-version-externally-managed
