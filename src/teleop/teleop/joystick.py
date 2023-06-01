@@ -1,5 +1,5 @@
 import rclpy
-from rclpy import Node
+from rclpy.node import Node
 from sensor_msgs import Joy
 import pygame
 
