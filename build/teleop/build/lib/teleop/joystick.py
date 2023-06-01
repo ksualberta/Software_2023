@@ -7,7 +7,7 @@ import pygame
 class JoystickNode(Node):
     def __init__(self):
         super().__init__('joystick_node')
-        self.create_publisher(Joy,'joystick_cmds', 10)
+        self.publisher = self.create_publisher(Joy,'joystick_cmds', 10)
 
         pygame.init()
         pygame.joystick.init()
@@ -39,8 +39,8 @@ class JoystickNode(Node):
         # Implement Joy Messages and controller input
 
         self.get_logger().info('Publishing header: "%s"' % joy_msg.header.stamp)
-        self.get_logger().info('Publishing axes: "%s"' % joy_msg.axes)
-        self.get_logger().info('Publishing buttons: "%s"' % joy_msg.buttons)
+        self.get_logger().info('Publishing axes: "%s"' % str(joy_msg.axes))
+        self.get_logger().info('Publishing buttons: "%s"' % str(joy_msg.buttons))
         self.publisher.publish(joy_msg)
         
 

@@ -9,9 +9,9 @@ class ArmControl(Node):
         self.subcription = self.create_subscription(msg_type=Joy,topic="joystick_cmds",qos_profile=10,callback = self.armControlCallback)
 
     def armControlCallback(self,data):
-        self.get_logger.info('Buttons and axes recieved')
-        self.get_logger.info("Axes array: %s" % str(data.buttons))
-        self.get_logger.info("Buttons array: %s" % str(data.axes))
+        self.get_logger().info('Buttons and axes recieved')
+        self.get_logger().info("Axes array: %s" % str(data.buttons))
+        self.get_logger().info("Buttons array: %s" % str(data.axes))
         self.buttonArray = data.buttons
         self.axesArray = data.axes
 
