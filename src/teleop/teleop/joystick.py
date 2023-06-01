@@ -38,6 +38,7 @@ class JoystickNode(Node):
         joy_msg.buttons = [self.joystick.get_button(i) for i in range(self.joystick.get_numbuttons())]
         # Implement Joy Messages and controller input
 
+        self.get_logger().info('Publishing: "%s"' % joy_msg.data)
         self.publisher.publish(joy_msg)
         
 
