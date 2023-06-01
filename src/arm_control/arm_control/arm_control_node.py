@@ -9,6 +9,7 @@ class ArmControl(Node):
         self.subcription = self.create_subscription(msg_type=Joy,topic="joystick_node",qos_profile=10,callback = self.armControlCallback)
 
     def armControlCallback(self,data):
+        self.get_logger.info('Buttons and axes recieved')
         self.buttonArray = data.buttons
         self.axesArray = data.axes
 
@@ -24,4 +25,6 @@ def main(args=None):
     armControlNode = ArmControl()
 
     rclpy.spin(armControlNode)
+    armControlNode.destroy_node()
+    rclpy.shutdown()
 
