@@ -2,6 +2,7 @@ import rclpy
 from rclpy import Node
 from sensor_msgs import Joy
 
+
 class JoystickNode(Node):
     def __init__(self):
         super().__init__('joystick_node')
@@ -19,7 +20,7 @@ class JoystickNode(Node):
         
 
 def main(args=None):
-    
+
     rclpy.init(args=args)
 
     joystick_node = JoystickNode()
