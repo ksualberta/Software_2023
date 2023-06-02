@@ -15,6 +15,11 @@ class JoystickNode(Node):
         timer_period = 0.5
         self.timer = self.create_timer(timer_period, self.timer_callback)
 
+    """
+    Description: Intializes pygame, and joystick. Continuously Checks for Joystick input and warns user if no input detected.
+    args: None
+    Return: None
+    """
     def timer_callback(self):
 
         pygame.joystick.quit()
@@ -31,17 +36,25 @@ class JoystickNode(Node):
             return
 
         
-        joy_msg = Joy()
+        self.joy_msg = Joy()
 
-        joy_msg.header.stamp = self.get_clock().now().to_msg()
-        joy_msg.axes = [self.joystick.get_axis(i) for i in range(self.joystick.get_numaxes())]
-        joy_msg.buttons = [self.joystick.get_button(i) for i in range(self.joystick.get_numbuttons())]
-        # Implement Joy Messages and controller input
+        #Gets data from Joystick and converts to Joy msg.
+        self.joy_msg.header.stamp = self.get_clock().now().to_msg()
+        self.joy_msg.axes = [self.joystick.get_axis(i) for i in range(self.joystick.get_numaxes())]
+        self.joy_msg.buttons = [self.joystick.get_button(i) for i in range(self.joystick.get_numbuttons())]
+        
+        #Testing purposes, publishes message to logs
+        self.call_log_msgs
 
-        self.get_logger().info('Publishing header: "%s"' % joy_msg.header.stamp)
-        self.get_logger().info('Publishing axes: "%s"' % str(joy_msg.axes))
-        self.get_logger().info('Publishing buttons: "%s"' % str(joy_msg.buttons))
-        self.publisher.publish(joy_msg)
+        #Publishes Message
+        self.publisher.publish(self.joy_msg)
+
+    def call_log_msgs(self):
+
+        self.get_logger().info('Publishing header: "%s"' % self.joy_msg.header.stamp)
+        self.get_logger().info('Publishing axes: "%s"' % str(self.joy_msg.axes))
+        self.get_logger().info('Publishing buttons: "%s"' % str(self.joy_msg.buttons))
+       
         
 
 def main(args=None):
