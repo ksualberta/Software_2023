@@ -19,6 +19,14 @@
     </visual>
 </link>
 
+<link name = "link_2">
+    <visual>
+        <origin rpy = "0.0 0 0" xyz = "0 0 0 "/>
+        <geometry>
+            <mesh filename="package://description/meshes/link_2.STL"/>
+        </geometry>
+    </visual>
+</link>
 
  <joint
     name="shoulder"
@@ -35,9 +43,20 @@
     <limit lower="-1.57" upper="1.57" effort="10" velocity="1" />
   </joint>
 
-  
+  <joint
+    name="elbow"
+    type="revolute">
+    <origin
+      xyz="-0.34315 -0.07335 -0.037841"
+      rpy="0 0 -3.1416" />
+    <parent
+        link="link_1" />
+    <child
+        link="link_2" />
+    <axis
+      xyz = "1 0 0"/>
+    <limit lower="-1.57" upper="1.57" effort="10" velocity="1" />
+  </joint>
     
     
- 
-
 </robot>
