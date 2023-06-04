@@ -19,11 +19,25 @@
     </visual>
 </link>
 
-<joint name="base_to_link" type ="fixed">
-    <parent link = "base_link"/>
-    <child link = "link_1"/>
-    <origin xyz="0 0 0" rpy="0 0 0"/>
-</joint>
 
+ <joint
+    name="shoulder"
+    type="revolute">
+    <origin
+      xyz="0 0 0.03935"
+      rpy="-1.5708 0 -1.5708" />
+    <parent
+      link="base_link" />
+    <child
+      link="link_1" />
+    <axis
+      xyz="0 1 0" />
+    <limit lower="-1.57" upper="1.57" effort="10" velocity="1" />
+  </joint>
+
+  
+    
+    
+ 
 
 </robot>

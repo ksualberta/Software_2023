@@ -1,43 +1,46 @@
 import os
-from ament_index_python.packages import get_package_share_directory
+import launch
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument
 from launch_ros.actions import Node
+from ament_index_python.packages import get_package_share_directory
+from launch.actions import DeclareLaunchArgument
 from launch.substitutions import LaunchConfiguration
-from launch.substitutions import ThisLaunchFileDir
-from launch.substitutions import PathJoinSubstitution
+from launch.conditions import IfCondition
+from launch.substitutions import PythonExpression
+import yaml
+
 
 def generate_launch_description():
-
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
-    urdf_file_name = 'Arm Full Assembly.urdf'
-    rviz2_file_name = 'display.rviz2'
-    
+    urdf_file_name = 'new_arm_assembly.urdf'
+
+    print("urdf_file_name : {}".format(urdf_file_name))
+
     urdf = os.path.join(
         get_package_share_directory('description'),
-        'urdf', urdf_file_name)
-        
-    rviz2_config_file = os.path.join(
-        get_package_share_directory('description'),
-        'rviz2', rviz2_file_name)
+        'urdf',
+        urdf_file_name)
+
+    robot_state_publisher_node = Node(
+        package='robot_state_publisher',
+        executable='robot_state_publisher',
+        name='robot_state_publisher',
+        output='screen',
+        parameters=[{'robot_description': open(urdf, 'r').read()}]
+    )
+
+    joint_state_publisher_gui_node = Node(
+        package='joint_state_publisher_gui',
+        executable='joint_state_publisher_gui',
+        name='joint_state_publisher_gui',
+        output='screen',
+    )
 
     return LaunchDescription([
         DeclareLaunchArgument(
             'use_sim_time',
             default_value='false',
             description='Use simulation (Gazebo) clock if true'),
-        Node(
-            package='robot_state_publisher',
-            executable='robot_state_publisher',
-            name='robot_state_publisher',
-            output='screen',
-            parameters=[{'use_sim_time': use_sim_time}],
-            arguments=[urdf]),
-        Node(
-            package='rviz2',
-            executable='rviz2',
-            name='rviz2',
-            output='screen',
-            parameters=[{'use_sim_time': use_sim_time}],
-            arguments=['-d', rviz2_config_file]),
+        robot_state_publisher_node,
+        joint_state_publisher_gui_node
     ])

@@ -11,7 +11,7 @@ setup(
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
         ('share/' + package_name + '/launch', ['launch/display.launch.py']),  # Add this line
-        ('share/' + package_name + '/urdf', ['urdf/Arm Full Assembly.urdf']),
+        ('share/' + package_name + '/urdf', ['urdf/new_arm_assembly.urdf']),
         ('share/' + package_name + '/meshes', ['meshes/base_link.STL', 'meshes/hand_link.STL', 'meshes/link_1.STL', 'meshes/link_2.STL']),
     ],
     install_requires=['setuptools'],
