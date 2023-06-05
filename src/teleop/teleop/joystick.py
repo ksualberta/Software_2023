@@ -48,6 +48,7 @@ class JoystickNode(Node):
 
         #Publishes Message
         self.publisher.publish(self.joy_msg)
+        self.call_log_msgs()
 
     def call_log_msgs(self):
 
