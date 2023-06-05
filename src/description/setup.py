@@ -8,12 +8,12 @@ setup(
     packages=find_packages(exclude=['test']),
     data_files=[
         ('share/ament_index/resource_index/packages',
-            ['resource/' + package_name]),
-        ('share/' + package_name, ['package.xml']),
-        ('share/' + package_name + '/launch', ['launch/display.launch.py']),  # Add this line
-        ('share/' + package_name + '/urdf', ['urdf/new_arm_assembly.urdf']),
-        ('share/' + package_name , ['rviz_config.rviz']),
-        ('share/' + package_name + '/meshes', ['meshes/base_link.STL', 'meshes/hand_link.STL', 'meshes/link_1.STL', 'meshes/link_2.STL']),
+            ['resource/description']),
+        ('share/description', ['package.xml']),
+        ('share/description/launch', ['launch/display.launch.py']),  
+        ('share/description/urdf', ['urdf/new_arm_assembly.urdf']),
+        ('share/description' , ['rviz_config.rviz']),
+        ('share/description/meshes', ['meshes/base_link.STL', 'meshes/hand_link.STL', 'meshes/link_1.STL', 'meshes/link_2.STL']),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
