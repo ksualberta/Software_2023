@@ -5,9 +5,8 @@ from launch_ros.actions import Node
 from ament_index_python.packages import get_package_share_directory
 from launch.actions import DeclareLaunchArgument
 from launch.substitutions import LaunchConfiguration
-from launch.conditions import IfCondition
-from launch.substitutions import PythonExpression
-import yaml
+
+
 
 
 def generate_launch_description():
@@ -20,6 +19,8 @@ def generate_launch_description():
         get_package_share_directory('description'),
         'urdf',
         urdf_file_name)
+    
+    rviz_confif = os.path.join(get_package_share_directory('description'),'rviz_config.rviz')
 
     robot_state_publisher_node = Node(
         package='robot_state_publisher',
@@ -41,6 +42,7 @@ def generate_launch_description():
         executable='rviz2',
         name='rviz2',
         output='screen',
+        #parameters=['-d', rviz_confif] Needs Fixing 
     )
 
     return LaunchDescription([
