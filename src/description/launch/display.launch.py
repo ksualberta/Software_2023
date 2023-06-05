@@ -37,10 +37,10 @@ def generate_launch_description():
     )
 
     rviz2_node = Node(
-        package = 'rviz2',
-        exceutabel = 'rviz2',
-        name = 'rviz2'
-        output = 'screen'
+        package='rviz2',
+        executable='rviz2',
+        name='rviz2',
+        output='screen',
     )
 
     return LaunchDescription([
