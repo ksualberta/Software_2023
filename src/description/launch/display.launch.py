@@ -36,11 +36,19 @@ def generate_launch_description():
         output='screen',
     )
 
+    rviz2_node = Node(
+        package = 'rviz2',
+        exceutabel = 'rviz2',
+        name = 'rviz2'
+        output = 'screen'
+    )
+
     return LaunchDescription([
         DeclareLaunchArgument(
             'use_sim_time',
             default_value='false',
             description='Use simulation (Gazebo) clock if true'),
         robot_state_publisher_node,
-        joint_state_publisher_gui_node
+        joint_state_publisher_gui_node,
+        rviz2_node
     ])
