@@ -13,7 +13,7 @@ setup(
         ('share/description/launch', ['launch/display.launch.py']),  
         ('share/description/urdf', ['urdf/new_arm_assembly.urdf']),
         ('share/description' , ['rviz_config.rviz']),
-        ('share/description/meshes', ['meshes/base_link.STL', 'meshes/hand_link.STL', 'meshes/link_1.STL', 'meshes/link_2.STL']),
+        ('share/description/meshes', ['meshes/base_joint.STL','meshes/base_link.STL', 'meshes/link_5.STL', 'meshes/link_1.STL', 'meshes/link_2.STL', 'meshes/link_3.STL','meshes/link_4.STL']),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
