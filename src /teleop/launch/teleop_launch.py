@@ -14,6 +14,12 @@ def generate_launch_description():
             parameters=[joy_params],
          )
 
+    joystick_conv = Node(
+            package = 'teleop',
+            executable = 'JoyToServoPub',
+    )
+
     return LaunchDescription([
-        joy_node       
+        joy_node,   
+        joystick_conv    
     ])
