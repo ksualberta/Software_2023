@@ -105,11 +105,32 @@ class JoyToServoPub(Node):
         lin_x_right = 0.5 * (JoystickMsg().axes[LEFT_TRIGGER]- Axis_Default["LEFT_TRIGGER"])
         self.twist_msg.linear.x = lin_x_right +lin_x_left
 
-        self.twist_msg.angular.y = 
+        self.twist_msg.angular.y = JoystickMsg.axes[LEFT_STICK_Y]
+        self.twist_msg.angular.x = JoystickMsg.axes[LEFT_STICK_X]
+        
+        roll_postive = RIGHT_BUMPER
+        roll_negative = -1 * LEFT_BUMPER
+        self.twist_msg.angular.z = roll_negative + roll_postive
 
+        return true
 
-        pass
     
     def JoystickMsg(self, msg);
 
         return msg
+
+
+def main(args=None):
+    rclpy.init(args=args)
+
+    joy_to_servo_pub = JoyToServoPub()
+
+    rclpy.spin(joy_to_servo_pub)
+
+    joy_to_servo_pub.destroy_node()
+    
+    rclpy.shutdown()
+
+
+if __name__ == '__main__':
+    main()
