@@ -84,7 +84,7 @@ class JoyToServoPub(Node):
 
     def ConvertJoyToCommand(self):
 
-        if(A or B or X or Y or D_PAD_X or D_PAD_Y):
+        if(self.joystick_msg.buttons[A] or self.joystick_msg.buttons[B] or self.joystick_msg.buttons[X] or self.joystick_msg.buttons[Y] or self.joystick_msg.buttons[D_PAD_X] or self.joystick_msg.buttons[D_PAD_Y]):
 
 
             self.joint_msg.joint_names.append("FILL OUT")
@@ -99,6 +99,7 @@ class JoyToServoPub(Node):
             self.joint_msg.joint_names.append("FILL OUT")
             self.joint_msg.velocities.append(self.joystick_msg.buttons[Y]- self.joystick_msg.buttons[A])
 
+            print("FALSE")
             return False 
 
         self.twist_msg.linear.z = self.joystick_msg.axes[RIGHT_STICK_Y]
@@ -116,6 +117,7 @@ class JoyToServoPub(Node):
         roll_negative = -1 * LEFT_BUMPER
         self.twist_msg.angular.z = roll_negative + roll_postive
 
+        print("TRUE")
         return True
 
     
