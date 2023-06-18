@@ -40,8 +40,8 @@ RIGHT_STICK_CLICK = 12
 
 Axis_Default = {
 
-    LEFT_TRIGGER : 1.0,
-    RIGHT_TRIGGER : 1.0,
+    "LEFT_TRIGGER" : 1.0,
+    "RIGHT_TRIGGER" : 1.0,
 }
 
 class JoyToServoPub(Node):
@@ -84,10 +84,28 @@ class JoyToServoPub(Node):
 
 
             self.joint_msg.joint_names.append("FILL OUT")
-            self.joint_msg.velocities.append(JoystickMsg().axes[D_PAD_X])
+            self.joint_msg.velocities.append(JoystickMsg().buttons[D_PAD_X])
 
             self.joint_msg.joint_names.append("FILL OUT")
-            self.joint_msg.velocities.append(JoystickMsg().axes[D_PAD_X])
+            self.joint_msg.velocities.append(JoystickMsg().buttons[D_PAD_Y])
+
+            self.joint_msg.joint_names.append("FILL OUT")
+            self.joint_msg.velocities.append(JoystickMsg().buttons[B] - JoystickMsg().buttons[X])
+
+            self.joint_msg.joint_names.append("FILL OUT")
+            self.joint_msg.velocities.append(JoystickMsg().buttons[Y]- JoystickMsg().buttons[A])
+
+            return False 
+
+        self.twist_msg.linear.z = JoystickMsg.axes[RIGHT_STICK_Y]
+        self.twist_msg.linear.y = 
+        
+        
+        lin_x_right = -0.5 * (JoystickMsg().axes[RIGHT_TRIGGER]- Axis_Default["LEFT_TRIGGER"])
+        lin_x_right = 0.5 * (JoystickMsg().axes[LEFT_TRIGGER]- Axis_Default["LEFT_TRIGGER"])
+        self.twist_msg.linear.x = lin_x_right +lin_x_left
+
+        self.twist_msg.angular.y = 
 
 
         pass
