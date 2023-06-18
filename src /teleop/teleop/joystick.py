@@ -102,20 +102,20 @@ class JoyToServoPub(Node):
             print("FALSE")
             return False 
 
-        self.twist_msg.linear.z = self.joystick_msg.axes[RIGHT_STICK_Y]
-        self.twist_msg.linear.y = self.joystick_msg.axes[RIGHT_STICK_X]
+        self.twist_msg.twist.linear.z = self.joystick_msg.axes[RIGHT_STICK_Y]
+        self.twist_msg.twist.linear.y = self.joystick_msg.axes[RIGHT_STICK_X]
         
         
-        lin_x_right = -0.5 * (self.joystick_msg.axes[RIGHT_TRIGGER]- Axis_Default["LEFT_TRIGGER"])
-        lin_x_right = 0.5 * (self.joystick_msg.axes[LEFT_TRIGGER]- Axis_Default["LEFT_TRIGGER"])
-        self.twist_msg.linear.x = lin_x_right +lin_x_left
+        lin_x_right = -0.5 * (self.joystick_msg.axes[RIGHT_TRIGGER]- Axis_Default["RIGHT_TRIGGER"])
+        lin_x_left = 0.5 * (self.joystick_msg.axes[LEFT_TRIGGER]- Axis_Default["LEFT_TRIGGER"])
+        self.twist_msg.twist.linear.x = lin_x_right + lin_x_left
 
-        self.twist_msg.angular.y = self.joystick_msg.axes[LEFT_STICK_Y]
-        self.twist_msg.angular.x = self.joystick_msg.axes[LEFT_STICK_X]
+        self.twist_msg.twist.angular.y = self.joystick_msg.axes[LEFT_STICK_Y]
+        self.twist_msg.twist.angular.x = self.joystick_msg.axes[LEFT_STICK_X]
         
-        roll_postive = RIGHT_BUMPER
-        roll_negative = -1 * LEFT_BUMPER
-        self.twist_msg.angular.z = roll_negative + roll_postive
+        roll_postive = 1.0 * self.joystick_msg.buttons[RIGHT_BUMPER]
+        roll_negative = -1.0 * self.joystick_msg.buttons[LEFT_BUMPER]
+        self.twist_msg.twist.angular.z = roll_negative + roll_postive
 
         print("TRUE")
         return True
