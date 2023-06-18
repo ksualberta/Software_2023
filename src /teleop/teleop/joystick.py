@@ -29,10 +29,10 @@ X = 3
 #Y = 3
 Y = 4
 LEFT_BUMPER = 4
-RIGHT_BUMPER = 5,
-CHANGE_VIEW = 6,
-MENU = 7,
-HOME = 8,
+RIGHT_BUMPER = 5
+CHANGE_VIEW = 6
+MENU = 7
+HOME = 8
 #LEFT_STICK_CLICK = 9
 LEFT_STICK_CLICK = 11
 #RIGHT_STICK_CLICK = 10
@@ -51,7 +51,7 @@ class JoyToServoPub(Node):
         self.frame_to_publish_ = BASE_FRAME_ID
 
         self.twist_pub = self.create_publisher(msg_type = TwistStamped, topic = Twist_Topic, qos_profile = QoSProfile(depth=10))
-        self.joint_pub = self.create_publisher(msg_type = JointJog, topic = Joy_Topic, qos_profile = QoSProfile(depth=10))
+        self.joint_pub = self.create_publisher(msg_type = JointJog, topic = Joint_Topic, qos_profile = QoSProfile(depth=10))
         self.joy_sub = self.create_subscription(msg_type = Joy, topic = Joy_Topic, qos_profile = rclpy.qos.qos_profile_system_default, callback= self.JoystickMsg)
         
         timer_period = 0.1
@@ -63,9 +63,9 @@ class JoyToServoPub(Node):
 
     def JoyMain(self):
 
-        UpdateCommandFrame()
+        self.UpdateCommandFrame()
 
-        if(ConvertJoyToCommand()):
+        if(self.ConvertJoyToCommand()):
 
             self.twist_msg = TwistStamped()
             self.twist_msg.header.stamp = self.get_clock().now().to_msg()
@@ -137,7 +137,7 @@ class JoyToServoPub(Node):
 
         elif(self.joystick_msg.buttons[MENU] and self.frame_to_publish_ == BASE_FRAME_ID):
 
-            frame_name == EEF_Frame_ID
+            self.frame_to_publish_ = EEF_Frame_ID
 
 
 def main(args=None):
