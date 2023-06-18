@@ -65,27 +65,24 @@ class JoyToServoPub(Node):
 
         self.UpdateCommandFrame()
 
+        self.twist_msg = TwistStamped()
+        self.joint_msg = JointJog()
+
         if(self.ConvertJoyToCommand()):
 
-            self.twist_msg = TwistStamped()
             self.twist_msg.header.stamp = self.get_clock().now().to_msg()
             self.twist_msg.header.frame_id = self.frame_to_publish_
             self.twist_pub.publish(self.twist_msg)
 
 
         else:
-            self.joint_msg = JointJog()
+            
             self.joint_msg.header.stamp = self.get_clock().now().to_msg()
             self.joint_msg.header.frame_id = self.frame_to_publish_
             self.joint_pub.publish(self.joint_msg)
 
 
-
-        pass
-
     def ConvertJoyToCommand(self):
-
-
 
         if(A or B or X or Y or D_PAD_X or D_PAD_Y):
 
@@ -119,7 +116,7 @@ class JoyToServoPub(Node):
         roll_negative = -1 * LEFT_BUMPER
         self.twist_msg.angular.z = roll_negative + roll_postive
 
-        return true
+        return True
 
     
     def JoystickMsg(self, msg):
