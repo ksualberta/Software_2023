@@ -114,7 +114,7 @@ class JoyToServoPub(Node):
         self.twist_msg.twist.angular.x = self.joystick_msg.axes[LEFT_STICK_X]
         
         roll_postive = 1.0 * self.joystick_msg.buttons[RIGHT_BUMPER]
-        roll_negative = -1.0 * self.joystick_msg.buttons[LEFT_BUMPER]
+        roll_negative = (-1.0) * self.joystick_msg.buttons[LEFT_BUMPER]
         self.twist_msg.twist.angular.z = roll_negative + roll_postive
 
         print("TRUE")
