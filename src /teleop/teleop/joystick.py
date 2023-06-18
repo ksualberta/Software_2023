@@ -98,7 +98,7 @@ class JoyToServoPub(Node):
             return False 
 
         self.twist_msg.linear.z = JoystickMsg.axes[RIGHT_STICK_Y]
-        self.twist_msg.linear.y = 
+        self.twist_msg.linear.y = JoystickMsg.axes[RIGHT_STICK_X]
         
         
         lin_x_right = -0.5 * (JoystickMsg().axes[RIGHT_TRIGGER]- Axis_Default["LEFT_TRIGGER"])
