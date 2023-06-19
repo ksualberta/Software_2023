@@ -1,0 +1,37 @@
+# This config file is used by ros2_control
+controller_manager:
+  ros__parameters:
+    update_rate: 100  # Hz
+
+    stepper_motor:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+
+    wrist:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+stepper_motor:
+  ros__parameters:
+    joints:
+      - Shoulder Roll
+      - Shoulder Pitch
+      - Elbow Pitch
+      - Elbow Roll
+      - Wrist Pitch
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+      - velocity
+wrist:
+  ros__parameters:
+    joint: Wrist Roll
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+      - velocity
