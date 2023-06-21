@@ -21,5 +21,5 @@ def generate_launch_description():
 
     return LaunchDescription([
         joy_node,   
-        #joystick_conv    
+        joystick_conv    
     ])
