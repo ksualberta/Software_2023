@@ -6,7 +6,7 @@ from ament_index_python.packages import get_package_share_directory
 
 def generate_launch_description():
 
-    joy_params = os.path.join(get_package_share_directory('teleop'),'config','joystick.yaml')
+    joy_params = os.path.join(get_package_share_directory('teleop'),'joystick.yaml')
 
     joy_node = Node(
             package='joy',
@@ -21,5 +21,5 @@ def generate_launch_description():
 
     return LaunchDescription([
         joy_node,   
-        joystick_conv    
+        #joystick_conv    
     ])

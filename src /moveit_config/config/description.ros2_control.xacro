@@ -13,42 +13,36 @@
                 <state_interface name="position">
                   <param name="initial_value">${initial_positions['Shoulder Roll']}</param>
                 </state_interface>
-                <state_interface name="velocity"/>
             </joint>
             <joint name="Shoulder Pitch">
                 <command_interface name="position"/>
                 <state_interface name="position">
                   <param name="initial_value">${initial_positions['Shoulder Pitch']}</param>
                 </state_interface>
-                <state_interface name="velocity"/>
             </joint>
             <joint name="Elbow Pitch">
                 <command_interface name="position"/>
                 <state_interface name="position">
                   <param name="initial_value">${initial_positions['Elbow Pitch']}</param>
                 </state_interface>
-                <state_interface name="velocity"/>
             </joint>
             <joint name="Elbow Roll">
                 <command_interface name="position"/>
                 <state_interface name="position">
                   <param name="initial_value">${initial_positions['Elbow Roll']}</param>
                 </state_interface>
-                <state_interface name="velocity"/>
             </joint>
             <joint name="Wrist Pitch">
                 <command_interface name="position"/>
                 <state_interface name="position">
                   <param name="initial_value">${initial_positions['Wrist Pitch']}</param>
                 </state_interface>
-                <state_interface name="velocity"/>
             </joint>
             <joint name="Wrist Roll">
                 <command_interface name="position"/>
                 <state_interface name="position">
                   <param name="initial_value">${initial_positions['Wrist Roll']}</param>
                 </state_interface>
-                <state_interface name="velocity"/>
             </joint>
 
         </ros2_control>

@@ -39,6 +39,21 @@ LEFT_STICK_CLICK = 11
 RIGHT_STICK_CLICK = 12
 
 
+#PS2 MAPPING 
+
+PS2_DPAD_UP = 13
+PS2_DPAD_DOWN = 14
+PS2_DPAD_LEFT = 15
+PS2_DPAD_RIGHT = 16
+
+PS2_X = 0 
+PS2_CIRCLE = 1
+PS2_SQUARE = 3
+PS2_TRIANGLE = 2
+
+
+
+
 Axis_Default = {
 
     "LEFT_TRIGGER" : 1.0,
@@ -84,20 +99,22 @@ class JoyToServoPub(Node):
 
     def ConvertJoyToCommand(self):
 
-        if(self.joystick_msg.buttons[A] or self.joystick_msg.buttons[B] or self.joystick_msg.buttons[X] or self.joystick_msg.buttons[Y] or self.joystick_msg.buttons[D_PAD_X] or self.joystick_msg.buttons[D_PAD_Y]):
+        if(self.joystick_msg.buttons[PS2_CIRCLE] or self.joystick_msg.buttons[PS2_X] or self.joystick_msg.buttons[PS2_TRIANGLE] 
+        or self.joystick_msg.buttons[PS2_SQUARE] or self.joystick_msg.buttons[PS2_DPAD_LEFT] 
+        or self.joystick_msg.buttons[PS2_DPAD_RIGHT] or self.joystick_msg.buttons[PS2_DPAD_UP] or self.joystick_msg.buttons[PS2_DPAD_DOWN]):
 
 
-            self.joint_msg.joint_names.append("FILL OUT")
-            self.joint_msg.velocities.append(self.joystick_msg.buttons[D_PAD_X])
+            self.joint_msg.joint_names.append("Shoulder Roll")
+            self.joint_msg.velocities.append(self.joystick_msg.buttons[PS2_DPAD_RIGHT] - self.joystick_msg.buttons[PS2_DPAD_LEFT])
 
-            self.joint_msg.joint_names.append("FILL OUT")
-            self.joint_msg.velocities.append(self.joystick_msg.buttons[D_PAD_Y])
+            self.joint_msg.joint_names.append("Sholder Pitch")
+            self.joint_msg.velocities.append(self.joystick_msg.buttons[PS2_DPAD_UP] - self.joystick_msg.buttons[PS2_DPAD_DOWN])
 
-            self.joint_msg.joint_names.append("FILL OUT")
-            self.joint_msg.velocities.append(self.joystick_msg.buttons[B] - self.joystick_msg.buttons[X])
+            self.joint_msg.joint_names.append("Wrist Roll")
+            self.joint_msg.velocities.append(self.joystick_msg.buttons[PS2_CIRCLE] - self.joystick_msg.buttons[PS2_SQUARE])
 
-            self.joint_msg.joint_names.append("FILL OUT")
-            self.joint_msg.velocities.append(self.joystick_msg.buttons[Y]- self.joystick_msg.buttons[A])
+            self.joint_msg.joint_names.append("Wrist Pitch")
+            self.joint_msg.velocities.append(self.joystick_msg.buttons[PS2_TRIANGLE] - self.joystick_msg.buttons[PS2_X])
 
             print("FALSE")
             return False 
