@@ -39,14 +39,14 @@ def generate_launch_description():
             moveit_config.robot_description,
             moveit_config.robot_description_semantic,
             moveit_config.robot_description_kinematics,
+            {"move_group_name": 'Main Arm'},
         ],
-        output="screen",
+        output="screen",      
     )
 
     return LaunchDescription(
         [
            
-       
             servo_node
     
         ]
