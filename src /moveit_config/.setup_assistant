@@ -1,0 +1,25 @@
+moveit_setup_assistant_config:
+  urdf:
+    package: description
+    relative_path: urdf/new_arm_assembly.urdf
+  srdf:
+    relative_path: config/description.srdf
+  package_settings:
+    author_name: Induwara Kandapahala
+    author_email: kandapaha@ualberta.ca
+    generated_timestamp: 1688175697
+  control_xacro:
+    command:
+      - position
+    state:
+      - position
+      - velocity
+  modified_urdf:
+    xacros:
+      - control_xacro
+  control_xacro:
+    command:
+      - position
+    state:
+      - position
+      - velocity
