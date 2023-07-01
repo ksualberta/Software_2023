@@ -35,20 +35,16 @@ def generate_launch_description():
         package="moveit_servo",
         executable="servo_node_main",
         parameters=[
-            {"move_group_name": 'Main Arm'},
             servo_params,
             moveit_config.robot_description,
             moveit_config.robot_description_semantic,
-            
-            
+            moveit_config.robot_description_kinematics,
         ],
         output="screen",      
     )
 
     return LaunchDescription(
         [
-           
             servo_node
-    
         ]
     )
