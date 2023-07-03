@@ -6,8 +6,8 @@ from sensor_msgs.msg import Joy
 from rclpy.qos import QoSProfile
 
 Joy_Topic = "/joy"
-Twist_Topic = "/servo_node/delta_twist_cmds"
-Joint_Topic = "/servo_node/delta_joint_cmds"
+Twist_Topic = "/arm_servo/delta_twist_cmds"
+Joint_Topic = "/arm_servo/delta_joint_cmds"
 EEF_Frame_ID = "link_5"
 BASE_FRAME_ID = "base_link"
 
