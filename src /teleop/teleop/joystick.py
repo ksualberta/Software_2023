@@ -103,20 +103,22 @@ class JoyToServoPub(Node):
         or self.joystick_msg.buttons[PS2_SQUARE] or self.joystick_msg.buttons[PS2_DPAD_LEFT] 
         or self.joystick_msg.buttons[PS2_DPAD_RIGHT] or self.joystick_msg.buttons[PS2_DPAD_UP] or self.joystick_msg.buttons[PS2_DPAD_DOWN]):
 
-
+            #Shoulder Roll Check 
             self.joint_msg.joint_names.append("Shoulder Roll")
             self.joint_msg.velocities.append(self.joystick_msg.buttons[PS2_DPAD_RIGHT] - self.joystick_msg.buttons[PS2_DPAD_LEFT])
-
-            self.joint_msg.joint_names.append("Sholder Pitch")
+            
+            #Shoulder Pitch Check
+            self.joint_msg.joint_names.append("Shoulder Pitch")
             self.joint_msg.velocities.append(self.joystick_msg.buttons[PS2_DPAD_UP] - self.joystick_msg.buttons[PS2_DPAD_DOWN])
 
-            self.joint_msg.joint_names.append("Wrist Roll")
+            #Disabled 
+            self.joint_msg.joint_names.append("Elbow Roll")
             self.joint_msg.velocities.append(self.joystick_msg.buttons[PS2_CIRCLE] - self.joystick_msg.buttons[PS2_SQUARE])
 
-            self.joint_msg.joint_names.append("Wrist Pitch")
+            #Wrist Pitch Check
+            self.joint_msg.joint_names.append("Elbow Pitch")
             self.joint_msg.velocities.append(self.joystick_msg.buttons[PS2_TRIANGLE] - self.joystick_msg.buttons[PS2_X])
 
-            print("FALSE")
             return False 
 
         self.twist_msg.twist.linear.z = self.joystick_msg.axes[RIGHT_STICK_Y]
@@ -134,7 +136,6 @@ class JoyToServoPub(Node):
         roll_negative = (-1.0) * self.joystick_msg.buttons[LEFT_BUMPER]
         self.twist_msg.twist.angular.z = roll_negative + roll_postive
 
-        print("TRUE")
         return True
 
     
