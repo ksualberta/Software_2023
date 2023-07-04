@@ -4,19 +4,27 @@ from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 from launch.substitutions import PathJoinSubstitution
 import os
+from moveit_configs_utils import MoveItConfigsBuilder
+
 
 param_file = os.path.join(get_package_share_directory("moveit_config"), "config", "moveit_servo_config.yaml")
-    
-print("ParamFile:" + param_file)
+kinematic_file = os.path.join(get_package_share_directory("moveit_config"), "config", "kinematics.yaml")
 
 def generate_launch_description():
+
+    moveit_config = (
+        MoveItConfigsBuilder(package_name = "moveit_config", robot_name = "")
+        .robot_description(file_path="config/description.urdf.xacro")
+        .to_moveit_configs()
+    )
 
     ld = LaunchDescription()
     servo_node = Node(
         package="moveit_servo",
         executable="servo_node_main",
         name='arm_servo',
-        parameters= [param_file]
+        parameters= [param_file, 
+        moveit_config.robot_description_kinematics]
         
     )
  
