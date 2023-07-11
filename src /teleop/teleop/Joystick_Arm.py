@@ -12,25 +12,24 @@ EEF_Frame_ID = "link_5"
 BASE_FRAME_ID = "base_link"
 
 
-LEFT_STICK_X = 0,
-LEFT_STICK_Y = 1,
-LEFT_TRIGGER = 2,
-RIGHT_STICK_X = 3,
-RIGHT_STICK_Y = 4,
-RIGHT_TRIGGER = 5,
-D_PAD_X = 6,
+LEFT_STICK_X = 0
+LEFT_STICK_Y = 1
+LEFT_TRIGGER = 2
+RIGHT_STICK_X = 3
+RIGHT_STICK_Y = 4
+RIGHT_TRIGGER = 5
+D_PAD_X = 6
 D_PAD_Y = 7
-
-A = 0,
-B = 1,
-X = 2,
-Y = 3,
-LEFT_BUMPER = 4,
-RIGHT_BUMPER = 5,
-CHANGE_VIEW = 6,
-MENU = 7,
-HOME = 8,
-LEFT_STICK_CLICK = 9,
+A = 0
+B = 1
+X = 2
+Y = 3
+LEFT_BUMPER = 4
+RIGHT_BUMPER = 5
+CHANGE_VIEW = 6
+MENU = 7
+HOME = 8
+LEFT_STICK_CLICK = 9
 RIGHT_STICK_CLICK = 10
 
 
@@ -40,10 +39,10 @@ Axis_Default = {
     "RIGHT_TRIGGER" : 1.0,
 }
 
-class joystickArm(Node):
+class Arm_Control(Node):
 
     def __init__(self):
-        super().__init__('joystickArm')
+        super().__init__('Arm_Control')
         self.frame_to_publish_ = BASE_FRAME_ID
 
         self.twist_pub = self.create_publisher(msg_type = TwistStamped, topic = Twist_Topic, qos_profile = QoSProfile(depth=10))
@@ -130,11 +129,11 @@ class joystickArm(Node):
 def main(args=None):
     rclpy.init(args=args)
 
-    joy_to_servo_pub = JoyToServoPub()
+    SPEAR_Arm_Node = Arm_Control()
 
-    rclpy.spin(joy_to_servo_pub)
+    rclpy.spin(SPEAR_Arm_Node)
 
-    joy_to_servo_pub.destroy_node()
+    SPEAR_Arm_Node.destroy_node()
     
     rclpy.shutdown()
 
