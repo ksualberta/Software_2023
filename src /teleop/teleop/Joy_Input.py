@@ -2,6 +2,7 @@ import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import Joy
 import pygame
+from rclpy.qos import QoSProfile
 
 class JoyPublisher(Node):
 
@@ -13,7 +14,7 @@ class JoyPublisher(Node):
         pygame.joystick.init()
 
         # Initialize publishers
-        self.publisher_spear = self.create_publisher(Joy, '/SPEAR_Arm/Joy_Topic', 10)
+        self.publisher_spear = self.create_publisher(msg_type = Joy, topic = '/SPEAR_Arm/Joy_Topic', qos_profile = QoSProfile(depth=10))
         self.publisher_rover = self.create_publisher(Joy, '/Rover_Arm/Joy_Topic', 10)
 
         self.timer = self.create_timer(0.1, self.publish_joystick_input)
@@ -42,11 +43,11 @@ class JoyPublisher(Node):
     def publish_joystick_input(self):
         # Get joystick inputs for two controllers
         joystick_input_spear = self.get_joystick_input(0)  # Assuming ID 0 for the SPEAR_Arm controller
-        joystick_input_rover = self.get_joystick_input(1)  # Assuming ID 1 for the Rover_Arm controller
+        #joystick_input_rover = self.get_joystick_input(1)  # Assuming ID 1 for the Rover_Arm controller
 
         # Publish joystick inputs
         self.publisher_spear.publish(joystick_input_spear)
-        self.publisher_rover.publish(joystick_input_rover)
+        #self.publisher_rover.publish(joystick_input_rover)
 
 def main(args=None):
     rclpy.init(args=args)
