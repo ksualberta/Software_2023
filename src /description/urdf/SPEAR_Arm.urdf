@@ -40,7 +40,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://description/meshes/base_link.STL" />
+          filename="package://description/meshes/base_link_collision.STL" />
       </geometry>
     </collision>
   </link>
@@ -80,7 +80,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://description/meshes/base_joint.STL" />
+          filename="package://description/meshes/joint_1_collsion.STL" />
       </geometry>
     </collision>
   </link>

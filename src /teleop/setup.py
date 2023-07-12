@@ -10,8 +10,10 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
-        ('share/' + package_name, ['config/joystick.yaml']),
-        ('share/' + package_name, ['launch/teleop_launch.py']),
+        
+        ('share/' + package_name, ['launch/teleop.launch.py']),
+        
+
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -22,7 +24,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'SPEAR_Arm_Node = teleop.Joystick_Arm:main'
+            'SPEAR_Arm_Node = teleop.Joystick_Arm:main',
+            'Joystick_Input = teleop.Joy_Input:main'
         ],
     },
 )

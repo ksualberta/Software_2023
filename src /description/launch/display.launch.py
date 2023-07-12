@@ -11,7 +11,7 @@ from launch.substitutions import LaunchConfiguration
 
 def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
-    urdf_file_name = 'new_arm_assembly.urdf'
+    urdf_file_name = 'SPEAR_Arm.urdf'
 
     print("urdf_file_name : {}".format(urdf_file_name))
 
