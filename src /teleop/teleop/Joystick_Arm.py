@@ -15,22 +15,22 @@ BASE_FRAME_ID = "base_link"
 LEFT_STICK_X = 0
 LEFT_STICK_Y = 1
 LEFT_TRIGGER = 2
-RIGHT_STICK_X = 1
-RIGHT_STICK_Y = 1
-RIGHT_TRIGGER = 1
-D_PAD_X = 1
-D_PAD_Y = 1
+RIGHT_STICK_X = 3
+RIGHT_STICK_Y = 4
+RIGHT_TRIGGER = 5
+D_PAD_X = 6
+D_PAD_Y = 7
 A = 0
 B = 1
 X = 2
 Y = 3
 LEFT_BUMPER = 4
 RIGHT_BUMPER = 5
-CHANGE_VIEW = 1
-MENU = 1
-HOME = 1
-LEFT_STICK_CLICK = 1
-RIGHT_STICK_CLICK = 1
+CHANGE_VIEW = 6
+MENU = 7
+HOME = 8
+LEFT_STICK_CLICK = 9
+RIGHT_STICK_CLICK = 10
 
 
 Axis_Default = {
@@ -55,7 +55,7 @@ class Arm_Control(Node):
         self.joy_sub = self.create_subscription(msg_type = Joy, topic = Joy_Topic, qos_profile = rclpy.qos.qos_profile_system_default, callback= self.JoystickMsg)
         
         print("Working 3")
-        timer_period = 0.2
+        timer_period = 0.1
 
         self.timer = self.create_timer(timer_period_sec = timer_period, callback = self.JoyMain)
         

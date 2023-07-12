@@ -17,7 +17,7 @@ class JoyPublisher(Node):
         self.publisher_spear = self.create_publisher(msg_type = Joy, topic = '/SPEAR_Arm/Joy_Topic', qos_profile = QoSProfile(depth=10))
         self.publisher_rover = self.create_publisher(Joy, '/Rover_Arm/Joy_Topic', 10)
 
-        self.timer = self.create_timer(0.1, self.publish_joystick_input)
+        self.timer = self.create_timer(0.05, self.publish_joystick_input)
 
     def get_joystick_input(self, joystick_id):
         # Get the specific joystick
@@ -27,10 +27,9 @@ class JoyPublisher(Node):
         # Get axes and buttons from the joystick
         axes = [joystick.get_axis(i) for i in range(joystick.get_numaxes())]
         buttons = [joystick.get_button(i) for i in range(joystick.get_numbuttons())]
-        hats = [joystick.get_hat(i) for i in range(joystick.get_numhats())]
-        
-        for hat in hats:
-            buttons.extend(hat)
+        hats = joystick.get_hat(0)
+        hats_float = tuple(float(x) for x in hats )
+        axes.extend(hats_float)
 
         # Create Joy message
         joystick_input = Joy()
