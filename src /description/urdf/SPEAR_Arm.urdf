@@ -341,7 +341,7 @@
     </inertial>
     <visual>
       <origin
-        xyz="-0.12 0 0"
+        xyz="-0.28 0 0"
         rpy="0 0 0" />
       <geometry>
         <mesh
@@ -366,7 +366,7 @@
     name="Wrist Roll"
     type="continuous">
     <origin
-      xyz="0.09 0.00300000000000089 -0.12"
+      xyz="0.09 0.00300000000000089 -0.25"
       rpy="1.57079632679489 1.5707963267949 0" />
     <parent
       link="link_4" />
@@ -380,40 +380,4 @@
       effort="0"
       velocity="0" />
   </joint>
-  <link
-    name="eef_link">
-    <visual>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
-      <geometry>
-        <box size = "0.01 0.01 0.01"/>
-      </geometry>
-      <material
-        name="">
-        <color
-          rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
-      </material>
-    </visual>
-    <collision>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
-      <geometry>
-        <box size = "0.01 0.01 0.01"/>
-      </geometry>
-    </collision>
-  </link>
-  <joint
-    name="eef_joint"
-    type="fixed">
-    <origin
-      xyz="0.17 0 0"
-      rpy="1.57079632679489 1.5707963267949 0" />
-    <parent
-      link="link_5" />
-    <child
-      link="eef_link" />
-  </joint>
-
 </robot>
