@@ -6,7 +6,7 @@ from launch_ros.substitutions import FindPackageShare
 from launch.substitutions import PathJoinSubstitution
 import os
 
-param_file = os.path.join(get_package_share_directory("moveit_spear"), "config", "moveit_servo_config.yaml")
+param_file = os.path.join(get_package_share_directory("spear_servo"), "config", "moveit_servo_config.yaml")
 
 def generate_launch_description():
 
