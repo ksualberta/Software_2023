@@ -5,6 +5,7 @@ moveit_controller_manager: moveit_simple_controller_manager/MoveItSimpleControll
 moveit_simple_controller_manager:
   controller_names:
     - Arm_Group_controller
+    - Eff_group_controller
 
   Arm_Group_controller:
     type: FollowJointTrajectory
@@ -16,4 +17,10 @@ moveit_simple_controller_manager:
       - Elbow Pitch
       - Elbow Roll
       - Wrist Pitch
+      - Wrist Roll
+  Eff_group_controller:
+    type: FollowJointTrajectory
+    action_ns: follow_joint_trajectory
+    default: true
+    joints:
       - Wrist Roll

@@ -16,12 +16,16 @@
         <joint name="Elbow Roll"/>
         <joint name="Wrist Pitch"/>
         <joint name="Wrist Roll"/>
+        <joint name="Rover_joint"/>
     </group>
     <group name="Eff_group">
         <link name="eef_link"/>
+        <link name="link_5"/>
     </group>
     <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
     <end_effector name="eef" parent_link="link_5" group="Eff_group"/>
+    <!--VIRTUAL JOINT: Purpose: this element defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)-->
+    <virtual_joint name="Rover_joint" type="fixed" parent_frame="Rover" child_link="base_link"/>
     <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
     <disable_collisions link1="base_joint" link2="base_link" reason="Adjacent"/>
     <disable_collisions link1="base_joint" link2="link_1" reason="Adjacent"/>
