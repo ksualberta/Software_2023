@@ -36,11 +36,10 @@
     </visual>
     <collision>
       <origin
-        xyz="0 0 0"
+        xyz="0 0 -0.015"
         rpy="0 0 0" />
       <geometry>
-        <mesh
-          filename="package://description/meshes/base_link_collision.STL" />
+        <box size = "0.128 0.128 0.07"/>
       </geometry>
     </collision>
   </link>
@@ -76,11 +75,10 @@
     </visual>
     <collision>
       <origin
-        xyz="0 0 0"
+        xyz="0.12 0 0"
         rpy="0 0 0" />
       <geometry>
-        <mesh
-          filename="package://description/meshes/joint_1_collsion.STL" />
+        <box size= "0.121 0.11 0.11"/>
       </geometry>
     </collision>
   </link>
@@ -129,11 +127,10 @@
     </visual>
     <collision>
       <origin
-        xyz="0 0 0"
+        xyz="0.045 0 -0.23"
         rpy="0 0 0" />
       <geometry>
-        <mesh
-          filename="package://description/meshes/link_1.STL" />
+        <box size= "0.1 0.08 0.14"/>
       </geometry>
     </collision>
   </link>
@@ -190,8 +187,7 @@
         xyz="0 0 0"
         rpy="0 0 0" />
       <geometry>
-        <mesh
-          filename="package://description/meshes/link_2.STL" />
+        <box size= "0.1 0.08 0.1"/>
       </geometry>
     </collision>
   </link>
@@ -245,11 +241,10 @@
     </visual>
     <collision>
       <origin
-        xyz="0 0 0"
+        xyz="0.21 0 0"
         rpy="0 0 0" />
       <geometry>
-        <mesh
-          filename="package://description/meshes/link_3.STL" />
+        <box size= "0.21 0.08 0.084"/>
       </geometry>
     </collision>
   </link>
@@ -303,11 +298,10 @@
     </visual>
     <collision>
       <origin
-        xyz="0 0 0"
+        xyz="0.085 0 0"
         rpy="0 0 0" />
       <geometry>
-        <mesh
-          filename="package://description/meshes/link_4.STL" />
+        <box size= "0.08 0.082 0.16"/>
       </geometry>
     </collision>
   </link>
@@ -333,7 +327,7 @@
     name="link_5">
     <inertial>
       <origin
-        xyz="0.170125955361708 -0.00360770807542265 0.00601989780117211"
+        xyz="0.70125955361708 -0.00360770807542265 0.00601989780117211"
         rpy="0 0 0" />
       <mass
         value="0.750967399035288" />
@@ -347,7 +341,7 @@
     </inertial>
     <visual>
       <origin
-        xyz="0 0 0"
+        xyz="-0.28 0 0"
         rpy="0 0 0" />
       <geometry>
         <mesh
@@ -361,11 +355,10 @@
     </visual>
     <collision>
       <origin
-        xyz="0 0 0"
+        xyz="-0.04 0 0"
         rpy="0 0 0" />
       <geometry>
-        <mesh
-          filename="package://description/meshes/link_5.STL" />
+        <box size= "0.16 0.08 0.14"/>
       </geometry>
     </collision>
   </link>
@@ -373,7 +366,7 @@
     name="Wrist Roll"
     type="continuous">
     <origin
-      xyz="0.09 0.00300000000000089 0.002"
+      xyz="0.09 0.00300000000000089 -0.25"
       rpy="1.57079632679489 1.5707963267949 0" />
     <parent
       link="link_4" />

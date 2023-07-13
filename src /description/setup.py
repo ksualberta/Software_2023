@@ -1,4 +1,5 @@
 from setuptools import find_packages, setup
+from glob import glob
 
 package_name = 'description'
 
@@ -13,11 +14,7 @@ setup(
         ('share/description/launch', ['launch/display.launch.py']),  
         ('share/description/urdf', ['urdf/SPEAR_Arm.urdf']),
         ('share/description' , ['rviz_config.rviz']),
-        ('share/description/meshes', 
-        ['meshes/base_joint.STL','meshes/base_link.STL', 'meshes/link_5.STL', 'meshes/link_1.STL',
-         'meshes/link_2.STL', 'meshes/link_3.STL',
-         'meshes/link_4.STL',
-         'base_link_']),
+        ('share/description/meshes', glob('meshes/*')),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
