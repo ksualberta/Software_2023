@@ -1,12 +1,13 @@
 import rclpy
 from rclpy.node import Node
-from std_msgs import Float32MultiArray
-from sensor_msgs import JointState
+from std_msgs.msg import Float32MultiArray
+from sensor_msgs.msg import JointState
 from sensor_msgs.msg import Joy
 from rclpy.qos import QoSProfile
 import time
+import numpy as np
 
-drive_topic = "/Rover/drive_commands
+drive_topic = "/Rover/drive_commands"
 steer_topic = "/Rover/steer_commands"
 joy_topic = "/Rover/Joy_Topic"
 
@@ -60,10 +61,13 @@ class RoverControl(Node):
 
         self.steer_right_limit = 0.5
         self.steer_left_limit = 2.64
-        self.steer_center = (steer_right_limit + steer_left_limit)/2
+        self.steer_center = (self.steer_right_limit + self.steer_left_limit)/2
 
+        
+        
         self.timer = self.create_timer(timer_period_sec = timer_period, callback = self.rover_main_control)
 
+        self.joystick_msg = Joy()
 
     def JoystickMsg(self, msg):
         
@@ -76,57 +80,59 @@ class RoverControl(Node):
         #Number of Drive Motors and Steering Motors
         
         self.drive_cmds_msg.data = [0.0]* self.drive_motors_num
-        self.steer_cmds.data = [self.steer_center]* self.steer_motors_num
+        self.steer_cmds_msg.data = [self.steer_center]* self.steer_motors_num
 
-        if joystick_msg.buttons[RIGHT_BUMPER] or joystick_msg.buttons[LEFT_BUMPER]
+        if self.joystick_msg.buttons[RIGHT_BUMPER] or self.joystick_msg.buttons[LEFT_BUMPER]:
 
             self.skid_steer_mode()
 
         else:
-
+            
             self.drive_motor_conv()
+
+            if self.steer_lock_state:
+
+                self.steer_motor_conv_locked()
+
+            elif not self.steer_lock_state:
+
+                self.steer_motor_conv_unlocked()
+        
+        print(self.steer_lock_state)
+        if(self.joystick_msg.buttons[MENU]):
+            self.steer_toggle()
 
         self.drive_cmds.publish(self.drive_cmds_msg)
 
-        
-        if(joystick_msg.buttons[MENU]):
-            steer_toggle()
-
-        if steer_lock_state:
-
-            steer_motor_conv_locked()
-
-        elif not steer_lock_state:
-
-            steer_motor_conv_unlocked():
-
-        self.steer_cmds.publish(steer_cmds_msg)
+        self.steer_cmds.publish(self.steer_cmds_msg)
 
 
 
 
     def drive_motor_conv(self):
 
-        threshold = 0.05
+        threshold = 0.0
         num_motors = 6
         
 
-        if self.joystick_msg.axes[RIGHT_TRIGGER] > threshold:
+        if self.joystick_msg.axes[RIGHT_TRIGGER] != -1.0:
+            
 
-            value = -(self.joystick_msg.axes[RIGHT_TRIGGER] - 1)
+            value = self.trigger_map(self.joystick_msg.axes[RIGHT_TRIGGER])
 
             self.drive_cmds_msg.data = [value] * self.drive_motors_num
             
         
-        elif joystick_msg.axes[LEFT_TRIGGER] > threshold:
+        elif self.joystick_msg.axes[LEFT_TRIGGER] != -1.0:
 
-            value = (self.joystick_msg.axes[LEFT_TRIGGER] - 1)
+            
+            value = -(self.trigger_map(self.joystick_msg.axes[LEFT_TRIGGER]))
             
             self.drive_cmds_msg.data = [value] * self.drive_motors_num
 
         else:
-
-            self.drive_cmds_msg.data = [value] * 0.0
+            
+            self.drive_cmds_msg.data = [0.0] * self.drive_motors_num
             
 
 
@@ -139,14 +145,16 @@ class RoverControl(Node):
         """
         threshold = 0.2
 
-        if self.joystick_msg.axes[LEFT_STICK_X] > threshold or self.joystick_msg.axe[LEFT_STICK_X] < -threshold:
+        if self.joystick_msg.axes[LEFT_STICK_X] > threshold or self.joystick_msg.axes[LEFT_STICK_X] < -threshold:
 
-            self.steer_cmds_msg[0:2] = map_value(self.joystick_msg.axes[LEFT_STICK_X])
+            self.steer_cmds_msg.data[0] = self.map_value(self.joystick_msg.axes[LEFT_STICK_X])
+            self.steer_cmds_msg.data[1] = self.map_value(self.joystick_msg.axes[LEFT_STICK_X])
         
 
-        if self.joystick_msg.axes[RIGHT_STICK_X] > threshold or self.joystick_msg.axe[RIGHT_STICK_X] < -threshold:
+        if self.joystick_msg.axes[RIGHT_STICK_X] > threshold or self.joystick_msg.axes[RIGHT_STICK_X] < -threshold:
 
-            self.steer_cmds_msg[2:4] = map_value(self.joystick_msg.axes[RIGHT_STICK_X])
+            self.steer_cmds_msg.data[2] = -(self.map_value(self.joystick_msg.axes[RIGHT_STICK_X]))
+            self.steer_cmds_msg.data[3] = -(self.map_value(self.joystick_msg.axes[RIGHT_STICK_X]))
 
         
 
@@ -158,10 +166,14 @@ class RoverControl(Node):
 
         threshold = 0.2
 
-        if self.joystick_msg.axes[LEFT_STICK_X] > threshold or self.joystick_msg.axe[LEFT_STICK_X] < -threshold:
+        if self.joystick_msg.axes[LEFT_STICK_X] > threshold or self.joystick_msg.axes[LEFT_STICK_X] < -threshold:
 
-            self.steer_cmds_msg[0:2] = map_value(self.joystick_msg.axes[LEFT_STICK_X])
-            self.steer_cmds_msg[2:4] = -(map_value(self.joystick_msg.axes[RIGHT_STICK_X]))
+            print(self.map_value(self.joystick_msg.axes[LEFT_STICK_X]))
+
+            self.steer_cmds_msg.data[0] = self.map_value(self.joystick_msg.axes[LEFT_STICK_X])
+            self.steer_cmds_msg.data[1] = self.map_value(self.joystick_msg.axes[LEFT_STICK_X])
+            self.steer_cmds_msg.data[2] = -(self.map_value(self.joystick_msg.axes[LEFT_STICK_X]))
+            self.steer_cmds_msg.data[3] = -(self.map_value(self.joystick_msg.axes[LEFT_STICK_X]))
 
         
 
@@ -171,26 +183,37 @@ class RoverControl(Node):
 
         if self.joystick_msg.buttons[LEFT_BUMPER]:
 
-            self.drive_cmds_msg.data[0:3] = [-(skid_steer_speed)]*3
-            self.drive_cmds_msg.data[3:6] = [skid_steer_speed]*3
+            self.drive_cmds_msg.data[0] = -(skid_steer_speed)
+            self.drive_cmds_msg.data[1] = -(skid_steer_speed)
+            self.drive_cmds_msg.data[2] = -(skid_steer_speed)
+            self.drive_cmds_msg.data[3] = skid_steer_speed
+            self.drive_cmds_msg.data[4] = skid_steer_speed
+            self.drive_cmds_msg.data[5] = skid_steer_speed
 
         elif self.joystick_msg.buttons[RIGHT_BUMPER]:
 
-            self.drive_cmds_msg.data[0:3] = [skid_steer_speed]*3
-            self.drive_cmds_msg.data[3:6] = [-(skid_steer_speed)]*3
-
+            self.drive_cmds_msg.data[0] = skid_steer_speed
+            self.drive_cmds_msg.data[1] = skid_steer_speed
+            self.drive_cmds_msg.data[2] = skid_steer_speed
+            self.drive_cmds_msg.data[3] = -(skid_steer_speed)
+            self.drive_cmds_msg.data[4] = -(skid_steer_speed)
+            self.drive_cmds_msg.data[5] = -(skid_steer_speed)
 
 
     def steer_toggle(self):
 
-    current_time = time.time()
-    if current_time - self.last_toggle_time > self.toggle_debounce_time:
+        current_time = time.time()
+        if current_time - self.last_toggle_time > self.toggle_debounce_time:
             self.steer_lock_state = not self.steer_lock_state
             self.last_toggle_time = current_time
 
-    def map_value(value):
+    def map_value(self, value):
         
-        return (value + 1) * (self.steer_left_limit - self.steer_right_limit) / (2) + self.steer_right_limit
+        return float((value + 1) * (self.steer_left_limit - self.steer_right_limit) / (2) + self.steer_right_limit)
+
+    def trigger_map(self, value):
+
+        return (value + 1) / 2
     
 
 def main(args=None):

@@ -24,6 +24,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+            'Rover_Control_Node = teleop.Rover_control:main',
             'SPEAR_Arm_Node = teleop.Joystick_Arm:main',
             'Joystick_Input = teleop.Joy_Input:main'
         ],
