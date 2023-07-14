@@ -191,4 +191,20 @@ class RoverControl(Node):
     def map_value(value):
         
         return (value + 1) * (self.steer_left_limit - self.steer_right_limit) / (2) + self.steer_right_limit
-        
+    
+
+def main(args=None):
+    rclpy.init(args=args)
+
+   
+    SPEAR_Rover_Node = RoverControl()
+
+    rclpy.spin(SPEAR_Rover_Node)
+
+    SPEAR_Rover_Node.destroy_node()
+    
+    rclpy.shutdown()
+
+
+if __name__ == '__main__':
+    main()
