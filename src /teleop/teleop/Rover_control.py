@@ -2,6 +2,7 @@ import rclpy
 from rclpy.node import Node
 from std_msgs import Float32MultiArray
 from sensor_msgs import JointState
+from sensor_msgs.msg import Joy
 from rclpy.qos import QoSProfile
 
 drive_topic = "/Rover/drive_commands
@@ -28,6 +29,14 @@ HOME = 8
 LEFT_STICK_CLICK = 9
 RIGHT_STICK_CLICK = 10
 
+#Note Motor Mapping 
+
+"""
+0 3
+1 4
+2 5
+"""
+
 class RoverControl(Node):
 
     def __init__(self):
@@ -40,7 +49,7 @@ class RoverControl(Node):
         #Subscription to Joy commands         
         self.joy_sub = self.create_subscription(msg_type = Joy, topic = joy_topic, qos_profile = rclpy.qos.qos_profile_system_default, callback= self.JoystickMsg)
 
-        timer = 0.2
+        timer_period = 0.2
 
         self.timer = self.create_timer(timer_period_sec = timer_period, callback = self.rover_main_control)
 
@@ -53,16 +62,57 @@ class RoverControl(Node):
         self.drive_cmds_msg = Float32MultiArray()
         self.steer_cmds_msg = Float32MultiArray()
 
+        #Number of Drive Motors and Steering Motors
+        self.drive_motors_num = 6
+        self.steer_motots_num = 4
 
-        pass
+
+        self.drive_cmds_msg.data = [0.0]* self.drive_motors_num
+        self.steer_cmds.data = [0.0]* self.steer_motots_num
+
+        if joystick_msg.buttons[RIGHT_BUMPER] or joystick_msg.buttons[LEFT_BUMPER]
+
+            self.skid_steer_mode()
+
+        else:
+
+            self.drive_motor_conv()
+
+        self.drive_cmds.publish(self.drive_cmds_msg)
+
+        
+        if()
+
+
+        """
+        Take in RT and LT input. Convert that into floating point values and
+        populate drive_cmds_msg
+        """
 
     def drive_motor_conv(self):
 
+        threshold = 0.05
+        num_motors = 6
+        
 
-        #Take in RT and LT input. Convert that into floating point values and
-        #populate drive_cmds_msg
+        if joystick_msg.axes[RIGHT_TRIGGER] > threshold:
 
-        pass
+            value = joystick_msg.axes[RIGHT_TRIGGER]
+
+            self.drive_cmds_msg.data = [value] * self.drive_motors_num
+            
+        
+        elif joystick_msg.axes[LEFT_TRIGGER] > threshold:
+
+            value = -(joystick_msg.axes[LEFT_TRIGGER])
+            
+            self.drive_cmds_msg.data = [value] * self.drive_motors_num
+
+        else:
+
+            fself.drive_cmds_msg.data = [value] * 0.0
+            
+
 
     def steer_motor_conv_unlocked(self):
 
@@ -90,10 +140,21 @@ class RoverControl(Node):
         Implment Deboucing mechanism 
         
         """
+        skid_steer_speed = 0.4
 
-        pass
+        if joystick_msg.buttons[LEFT_BUMPER]:
 
-    def skid_toggle(self):
+            self.drive_cmds_msg.data[0:3] = [-(skid_steer_speed)]*3
+            self.drive_cmds_msg.data[3:6] = [skid_steer_speed]*3
+
+        elif joystick_msg.buttons[RIGHT_BUMPER]:
+
+            self.drive_cmds_msg.data[0:3] = [skid_steer_speed]*3
+            self.drive_cmds_msg.data[3:6] = [-(skid_steer_speed)]*3
+
+
+
+    def steer_toggle(self):
 
         """
         Toggle between a true and value switch 
@@ -115,5 +176,7 @@ class RoverControl(Node):
             self.last_toggle_time = current_time
 
         """
+
+
 
         pass
