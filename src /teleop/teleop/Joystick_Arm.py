@@ -46,15 +46,15 @@ class Arm_Control(Node):
        
         self.frame_to_publish_ = BASE_FRAME_ID
 
-        print("Working")
+        
 
         self.twist_pub = self.create_publisher(msg_type = TwistStamped, topic = Twist_Topic, qos_profile = QoSProfile(depth=10))
         self.joint_pub = self.create_publisher(msg_type = JointJog, topic = Joint_Topic, qos_profile = QoSProfile(depth=10))
 
-        print("Working 2")
+        
         self.joy_sub = self.create_subscription(msg_type = Joy, topic = Joy_Topic, qos_profile = rclpy.qos.qos_profile_system_default, callback= self.JoystickMsg)
         
-        print("Working 3")
+        
         timer_period = 0.1
 
         self.timer = self.create_timer(timer_period_sec = timer_period, callback = self.JoyMain)
@@ -68,8 +68,7 @@ class Arm_Control(Node):
         self.twist_msg = TwistStamped()
         self.joint_msg = JointJog()
         
-        print("Working 6")
-        print(self.joystick_msg)
+        
 
         if(self.ConvertJoyToCommand()):
 
@@ -129,9 +128,9 @@ class Arm_Control(Node):
 
     
     def JoystickMsg(self, msg):
-        print("Working 4")
+        
         self.joystick_msg = msg
-        print(msg)
+    
 
 
 
