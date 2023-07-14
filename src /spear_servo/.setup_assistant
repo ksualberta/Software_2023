@@ -7,7 +7,7 @@ moveit_setup_assistant_config:
   package_settings:
     author_name: "Induwara Kandaphala "
     author_email: kandapah@ualberta.ca
-    generated_timestamp: 1689289949
+    generated_timestamp: 1689292006
   control_xacro:
     command:
       - position

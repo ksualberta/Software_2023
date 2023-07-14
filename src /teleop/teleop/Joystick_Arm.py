@@ -74,14 +74,14 @@ class Arm_Control(Node):
         if(self.ConvertJoyToCommand()):
 
             self.twist_msg.header.stamp = self.get_clock().now().to_msg()
-            self.twist_msg.header.frame_id = "link_5"
+            self.twist_msg.header.frame_id = "base_link"
             self.twist_pub.publish(self.twist_msg)
 
 
         else:
             
             self.joint_msg.header.stamp = self.get_clock().now().to_msg()
-            self.joint_msg.header.frame_id = "link_5"
+            self.joint_msg.header.frame_id = "base_link"
             self.joint_pub.publish(self.joint_msg)
 
 
