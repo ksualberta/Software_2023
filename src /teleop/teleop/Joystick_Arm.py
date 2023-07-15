@@ -44,7 +44,7 @@ class Arm_Control(Node):
     def __init__(self):
         super().__init__('Arm_Control')
        
-        self.frame_to_publish_ = BASE_FRAME_ID
+        self.frame_to_publish_ = EEF_Frame_ID
 
         
 
