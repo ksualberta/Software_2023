@@ -6,6 +6,7 @@ from sensor_msgs.msg import Joy
 from rclpy.qos import QoSProfile
 import time
 import numpy as np
+from rclpy.time import Time
 
 drive_topic = "/Rover/drive_commands"
 steer_topic = "/Rover/steer_commands"
@@ -44,6 +45,8 @@ class RoverControl(Node):
     def __init__(self):
         super().__init__('rover_control')
 
+        self.joystick_msg_timestamp = time.time()
+
         #Publsiher drive and steer commands
         self.drive_cmds = self.create_publisher(msg_type = Float32MultiArray, topic = drive_topic, qos_profile = QoSProfile(depth=10))
         self.steer_cmds = self.create_publisher(msg_type = Float32MultiArray, topic = steer_topic, qos_profile = QoSProfile(depth=10))
@@ -51,7 +54,8 @@ class RoverControl(Node):
         #Subscription to Joy commands         
         self.joy_sub = self.create_subscription(msg_type = Joy, topic = joy_topic, qos_profile = rclpy.qos.qos_profile_system_default, callback= self.JoystickMsg)
 
-        timer_period = 0.2
+        
+        timer_period = 0.1
 
         self.last_toggle_time = time.time()
         self.steer_lock_state = True
@@ -72,8 +76,19 @@ class RoverControl(Node):
     def JoystickMsg(self, msg):
         
         self.joystick_msg = msg
+        self.joystick_msg_timestamp = Time.from_msg(msg.header.stamp)
     
     def rover_main_control(self):
+        
+        timeout = 1.0  # Set the timeout value, for example 1 second
+        
+        # Terminate the program if no new joystick message has been received within the timeout
+        if self.get_clock().now() - self.joystick_msg_timestamp > rclpy.duration.Duration(seconds=timeout):
+            self.get_logger().error("Joystick timeout. Ending program.")
+            rclpy.shutdown()
+            sys.exit(1)  # This will terminate the program
+
+
         self.drive_cmds_msg = Float32MultiArray()
         self.steer_cmds_msg = Float32MultiArray()
 
