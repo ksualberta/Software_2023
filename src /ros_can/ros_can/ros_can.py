@@ -65,8 +65,9 @@ class Ros_2_Can(Node):
         timeout = 1.0
         
         # Convert ROS messages to CAN messages
-        
+        self.heartbeat()
         self.home_controls()
+
         drive_can_messages = self.drive_float32_can()
         steer_can_messages = self.steer_float32_can()
 
@@ -163,6 +164,17 @@ class Ros_2_Can(Node):
 
         except IndexError:
             self.get_logger().error("Index Error home_controls")
+
+    def heartbeat(self):
+
+        priority = 2    
+        frame_id = 0x30
+        arbitration_id = (priority << 24) | (frame_id << 8) | self.node_id
+        current_time = int(time.time() * 1000) & 0xFFFFFFFF
+        current_time_bytes = struct.pack('i', current_time) 
+        can_msg = can.Message(arbitration_id=arbitration_id, data=current_time_bytes, is_extended_id=True)
+        self.can_publish([can_msg])
+        
 
 
 def main(args=None):
