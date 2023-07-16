@@ -12,7 +12,7 @@ import struct
 
 drive_topic = "/Rover/drive_commands"
 steer_topic = "/Rover/steer_commands"
-
+joy_topic = "/Rover/Joy_Topic"
 
 class Ros_2_Can(Node):
 
@@ -27,9 +27,14 @@ class Ros_2_Can(Node):
         self.drive_msg.data = [0.0]*6
         self.steer_msg.data = [0.0]*4
 
+        self.home_last_toggle_time = time.time()
+        self.toggle_debounce_time = 0.5
+
         self.drive_data = self.create_subscription(msg_type = Float32MultiArray, topic = drive_topic, qos_profile = rclpy.qos.qos_profile_system_default, callback= self.drivemsg)
 
         self.steer_data = self.create_subscription(msg_type = Float32MultiArray, topic = steer_topic, qos_profile = rclpy.qos.qos_profile_system_default, callback= self.steermsg)
+
+        self.joy_data = self.create_subscription(msg_type = Joy, topic = joy_topic, qos_profile = rclpy.qos.qos_profile_system_default, callback= self.joymsg)
 
         self.bus = can.interface.Bus(interface='socketcan', channel='vcan0', bitrate=500000)
 
@@ -50,6 +55,10 @@ class Ros_2_Can(Node):
         self.steer_msg = msg
         self.steer_msg_timestamp = time.time()
 
+    def joymsg(self, msg):
+
+        self.joy_msg = msg
+        self.joy_msg_timestamp = time.time()
 
     def ros2can(self):
 
@@ -57,8 +66,10 @@ class Ros_2_Can(Node):
         
         # Convert ROS messages to CAN messages
         
+        self.home_controls()
         drive_can_messages = self.drive_float32_can()
         steer_can_messages = self.steer_float32_can()
+
         if time.time() - self.drive_msg_timestamp > timeout:
             self.drive_msg.data = [0.0]*6
             self.get_logger().warn("Default Value being published, new data not recived")
@@ -128,7 +139,6 @@ class Ros_2_Can(Node):
 
         
         try:
-            self.get_logger().info("Publish function ran")
             for msg in can_messages:
                 self.bus.send(msg)
 
@@ -138,6 +148,21 @@ class Ros_2_Can(Node):
         except Exception as e:
             self.get_logger().error(f"CRITICAL: Unexpected error in steer_float32_can: {e}")
 
+
+    def home_controls(self):
+        
+        priority = 3    
+        frame_id = 0x02
+        current_time = time.time()
+        try:
+            if (current_time - self.home_last_toggle_time) > self.toggle_debounce_time and self.joy_msg.buttons[8]:
+                arbitration_id = (priority << 24) | (frame_id << 8) | self.node_id
+                can_msg = can.Message(arbitration_id=arbitration_id, is_extended_id=True)
+                self.can_publish([can_msg])
+                self.home_last_toggle_time = current_time
+
+        except IndexError:
+            self.get_logger().error("Index Error home_controls")
 
 
 def main(args=None):
