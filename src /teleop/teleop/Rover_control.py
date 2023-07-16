@@ -55,7 +55,7 @@ class RoverControl(Node):
         self.joy_sub = self.create_subscription(msg_type = Joy, topic = joy_topic, qos_profile = rclpy.qos.qos_profile_system_default, callback= self.JoystickMsg)
 
         
-        timer_period = 0.1
+        timer_period = 0.05
 
         self.last_toggle_time = time.time()
         self.steer_lock_state = True

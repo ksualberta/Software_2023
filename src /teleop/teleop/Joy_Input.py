@@ -17,7 +17,7 @@ class JoyPublisher(Node):
         self.publisher_spear = self.create_publisher(msg_type = Joy, topic = '/SPEAR_Arm/Joy_Topic', qos_profile = QoSProfile(depth=10))
         self.publisher_rover = self.create_publisher(Joy, '/Rover/Joy_Topic', 10)
 
-        self.timer = self.create_timer(0.05, self.publish_joystick_input)
+        self.timer = self.create_timer(0.005, self.publish_joystick_input)
 
     def get_joystick_input(self, joystick_id):
         # Get the specific joystick
