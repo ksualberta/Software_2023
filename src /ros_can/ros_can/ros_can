@@ -36,7 +36,15 @@ class Arm_Control(Node):
 
     def ros2can(self):
 
-        pass
+        # Convert ROS messages to CAN messages
+        drive_can_messages = self.drive_float32_can()
+        steer_can_messages = self.steer_float32_can()
+
+        # Publish CAN messages on the CAN bus
+        self.can_publish(drive_can_messages)
+        self.can_publish(steer_can_messages)
+
+        
 
     def drive_float32_can(self):
 
@@ -61,10 +69,10 @@ class Arm_Control(Node):
             can_msg = can.Message(arbitration_id=arbitration_id, data=data_msg)
             can_messages.append(can_msg)
             
-    return can_messages
+        return can_messages
         
 
-    def steer_float32_can(self)
+    def steer_float32_can(self):
 
         priority = 5
         node_id = 0
@@ -87,9 +95,15 @@ class Arm_Control(Node):
             can_msg = can.Message(arbitration_id=arbitration_id, data=data_msg)
             can_messages.append(can_msg)
 
-    def can_publish(self):
+        return can_messages
 
-        pass
+    def can_publish(self, can_messages):
+
+        for msg in can_messages:
+            self.bus.send(msg)
+
+
+        
 
     
     def can_recieve(self):
