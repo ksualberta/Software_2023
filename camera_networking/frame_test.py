@@ -8,9 +8,14 @@ ENCODEPARAM = [int(cv2.IMWRITE_JPEG_QUALITY), JPEGQUALITY]
 
 def start():
     camera = cv2.VideoCapture(0)
-    mainWindow = Tk(screenName="Sample Window")
-    mainWindow.maxsize(width=1000,height=1000)
-    mainFeedLabel = Label(master=mainWindow)
+    mainWindow = Tk()
+    mainWindow.geometry(newGeometry="1000x1000")
+    mainWindow.title("SPEAR MAIN FEED")
+    mainFrame = Frame(master=mainWindow,borderwidth=3)
+    mainFrame.grid(column=0)
+    mainFeedLabel = Label(master=mainFrame)
+    mainFeedLabel.config(borderwidth=2)
+    mainFeedLabel.grid()
     while True:
         ret, frame = camera.read()
         image = cv2.imencode(".jpg",frame,ENCODEPARAM)
