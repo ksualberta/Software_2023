@@ -1,0 +1,3 @@
+[submodule "camera"]
+	path = camera
+	url = https://github.com/NathanDobell/SPEAR-Webcam-Image-Transfer-Python-.git
