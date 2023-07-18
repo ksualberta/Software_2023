@@ -380,4 +380,40 @@
       effort="0"
       velocity="0" />
   </joint>
+  <link
+    name="EEF">
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+          <box size= "0.02 0.02 0.02"/>
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <box size= "0.02 0.02 0.02"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="EEF_Joint"
+    type="fixed">
+    <origin
+      xyz="0.01 0 0"
+      rpy="1.57079632679489 1.5707963267949 0" />
+    <parent
+      link="link_5" />
+    <child
+      link="EEF"/>
+  </joint>
+
 </robot>
