@@ -23,7 +23,7 @@ def send_servo_signal(message:str):
     global servo_y_angle
 
     messageList = message.split("/") #splits on the "/" to give the angle change in [0] and in axis in [1]
-    angle_change = int(messageList[0])
+    angle_change = float(messageList[0])
     print("[X-ANGLE]: {}".format(servo_x_angle))
     print("[Y-ANGLE]: {}".format(servo_y_angle))
     print(["[CHANGE-ANGLE]: {}".format(angle_change)])
