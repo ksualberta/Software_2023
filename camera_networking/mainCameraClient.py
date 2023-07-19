@@ -7,7 +7,7 @@ import numpy as np
 ##-----------------------------------------------------------------------------------------#
 ## CONSTANT VALUES
 PORT   = 7505
-SERVER = '10.0.0.43' ## ez adress switch
+SERVER = socket.gethostbyname(socket.gethostname()) ## ez adress switch
 #SERVER = socket.gethostbyname(socket.gethostname())
 ADDR   = (SERVER , PORT) ## basic informaton for contacting server
 HEADER = 16 ## How big the header is on the incoming info
