@@ -341,7 +341,7 @@
     </inertial>
     <visual>
       <origin
-        xyz="-0.28 0 0"
+        xyz="0.28 0 0"
         rpy="0 0 0" />
       <geometry>
         <mesh
@@ -408,8 +408,8 @@
     name="EEF_Joint"
     type="fixed">
     <origin
-      xyz="0.01 0 0"
-      rpy="1.57079632679489 1.5707963267949 0" />
+      xyz="-0.01 0 0"
+      rpy="0 0 0" />
     <parent
       link="link_5" />
     <child
