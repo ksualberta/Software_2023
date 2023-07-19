@@ -62,7 +62,7 @@
     <visual>
       <origin
         xyz="0 0 0"
-        rpy="0 0 0" />
+        rpy="0.740762263510472 -1.5707963267949 0" />
       <geometry>
         <mesh
           filename="package://description/meshes/base_joint.STL" />
@@ -87,13 +87,13 @@
     type="continuous">
     <origin
       xyz="0 0 0"
-      rpy="0.740762263510472 -1.5707963267949 0" />
+      rpy="0 0 0" />
     <parent
       link="base_link" />
     <child
       link="base_joint" />
     <axis
-      xyz="1 0 0" />
+      xyz="0 0 1" />
   </joint>
   <link
     name="link_1">
@@ -114,7 +114,7 @@
     <visual>
       <origin
         xyz="0 0 0"
-        rpy="0 0 0" />
+        rpy="0 1.5708 0" />
       <geometry>
         <mesh
           filename="package://description/meshes/link_1.STL" />
@@ -138,14 +138,14 @@
     name="Shoulder Pitch"
     type="revolute">
     <origin
-      xyz="0.112 0 0"
-      rpy="0 0.830034063284424 1.57079632679488" />
+      xyz="0 0 0.112"
+      rpy="0 0 0" />
     <parent
       link="base_joint" />
     <child
       link="link_1" />
     <axis
-      xyz="-1 0 0" />
+      xyz="0 1 0" />
     <limit
       lower="-1.0472"
       upper="3.6652"
@@ -195,14 +195,14 @@
     name="Elbow Pitch"
     type="revolute">
     <origin
-      xyz="0.0428412022704851 -0.000700000000055892 -0.34315000105285"
-      rpy="0 0 -3.14159265358978" />
+      xyz="-0.34315 -0.0428412022704851 0.000700000000055892"
+      rpy="0 0 0" />
     <parent
       link="link_1" />
     <child
       link="link_2" />
     <axis
-      xyz="1 0 0" />
+      xyz="0 1 0" />
     <limit
       lower="-2.7925"
       upper="1.9722"
@@ -252,8 +252,8 @@
     name="Elbow Roll"
     type="revolute">
     <origin
-      xyz="0.09 0 0"
-      rpy="1.5707963267949 1.5707963267949 0" />
+      xyz="0 0.09 0"
+      rpy="0 0 0" />
     <parent
       link="link_2" />
     <child
@@ -309,14 +309,14 @@
     name="Wrist Pitch"
     type="revolute">
     <origin
-      xyz="0.25884999894715 -0.00284120227048547 0.000299999999948689"
-      rpy="-1.57079632679492 0 1.5707963267949" />
+      xyz="-0.25884999894715 -0.00284120227048547 -0.000299999999948689"
+      rpy="0 0 0" />
     <parent
       link="link_3" />
     <child
       link="link_4" />
     <axis
-      xyz="-1 0 0" />
+      xyz="0 1 0" />
     <limit
       lower="-2.7576"
       upper="2.6704"
@@ -366,8 +366,8 @@
     name="Wrist Roll"
     type="continuous">
     <origin
-      xyz="0.09 0.00300000000000089 -0.25"
-      rpy="1.57079632679489 1.5707963267949 0" />
+      xyz="-0.25 0.09 0.00300000000000089"
+      rpy="0 0 0" />
     <parent
       link="link_4" />
     <child
