@@ -9,12 +9,12 @@ from moveit_configs_utils import MoveItConfigsBuilder
 
 import os
 
-param_file = os.path.join(get_package_share_directory("spear_servo"), "config", "moveit_servo_config.yaml")
+param_file = os.path.join(get_package_share_directory("moveit_spear"), "config", "moveit_servo_config.yaml")
 
 def generate_launch_description():
 
     moveit_config = (
-         MoveItConfigsBuilder(robot_name = "", package_name ="spear_servo")
+         MoveItConfigsBuilder(robot_name = "", package_name ="moveit_spear")
          .robot_description(file_path="config/SPEAR_Arm.urdf.xacro")
          .to_moveit_configs()
      )
@@ -26,6 +26,7 @@ def generate_launch_description():
         name='arm_servo',
         parameters= [param_file,
         moveit_config.robot_description_kinematics],
+        arguments=['--ros-args', '--log-level', 'INFO'],
         output = 'screen',
         
     )

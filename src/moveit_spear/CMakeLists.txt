@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.22)
-project(spear_servo)
+project(moveit_spear)
 
 find_package(ament_cmake REQUIRED)
 

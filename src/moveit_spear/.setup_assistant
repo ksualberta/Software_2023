@@ -5,9 +5,9 @@ moveit_setup_assistant_config:
   srdf:
     relative_path: config/SPEAR_Arm.srdf
   package_settings:
-    author_name: "Induwara Kandaphala "
+    author_name: Induwara Kandapahala
     author_email: kandapah@ualberta.ca
-    generated_timestamp: 1689292006
+    generated_timestamp: 1689723283
   control_xacro:
     command:
       - position
