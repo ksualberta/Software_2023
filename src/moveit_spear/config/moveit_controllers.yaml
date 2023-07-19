@@ -16,5 +16,4 @@ moveit_simple_controller_manager:
       - Elbow Pitch
       - Elbow Roll
       - Wrist Pitch
-    action_ns: follow_joint_trajectory
-    default: true
+      - Wrist Roll

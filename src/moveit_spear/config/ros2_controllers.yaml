@@ -18,6 +18,7 @@ Arm_Group_controller:
       - Elbow Pitch
       - Elbow Roll
       - Wrist Pitch
+      - Wrist Roll
     command_interfaces:
       - position
     state_interfaces:

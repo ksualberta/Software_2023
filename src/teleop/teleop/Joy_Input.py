@@ -16,7 +16,7 @@ class JoyPublisher(Node):
         # Initialize publishers
         self.publisher_spear = self.create_publisher(msg_type = Joy, topic = '/SPEAR_Arm/Joy_Topic', qos_profile = QoSProfile(depth=10))
         self.publisher_rover = self.create_publisher(Joy, '/Rover/Joy_Topic', 10)
-
+        self.threshold = 0.04 
         self.timer = self.create_timer(0.005, self.publish_joystick_input)
 
     def get_joystick_input(self, joystick_id):
@@ -30,6 +30,8 @@ class JoyPublisher(Node):
         hats = joystick.get_hat(0)
         hats_float = tuple(float(x) for x in hats )
         axes.extend(hats_float)
+
+        axes = [0.00 if abs(x) < self.threshold else x for x in axes]
 
         # Create Joy message
         joystick_input = Joy()

@@ -8,7 +8,7 @@ from rclpy.qos import QoSProfile
 Joy_Topic = "/SPEAR_Arm/Joy_Topic"
 Twist_Topic = "/SPEAR_Arm/delta_twist_cmds"
 Joint_Topic = "/SPEAR_Arm/delta_joint_cmds"
-EEF_Frame_ID = "link_5"
+EEF_Frame_ID = "EEF"
 BASE_FRAME_ID = "base_link"
 
 
@@ -73,22 +73,23 @@ class Arm_Control(Node):
         if(self.ConvertJoyToCommand()):
 
             self.twist_msg.header.stamp = self.get_clock().now().to_msg()
-            self.twist_msg.header.frame_id = "base_link"
+            self.twist_msg.header.frame_id = "EEF"
             self.twist_pub.publish(self.twist_msg)
 
 
         else:
             
             self.joint_msg.header.stamp = self.get_clock().now().to_msg()
-            self.joint_msg.header.frame_id = "base_link"
+            self.joint_msg.header.frame_id = "EEF"
             self.joint_pub.publish(self.joint_msg)
 
 
     def ConvertJoyToCommand(self):
 
         if(self.joystick_msg.buttons[A] or self.joystick_msg.buttons[B] or self.joystick_msg.buttons[X] 
-        or self.joystick_msg.buttons[Y] or self.joystick_msg.axes[D_PAD_X] 
-        or self.joystick_msg.axes[D_PAD_Y]):
+        or self.joystick_msg.buttons[Y] or self.joystick_msg.axes[D_PAD_X] or self.joystick_msg.buttons[LEFT_STICK_CLICK]
+        or self.joystick_msg.axes[D_PAD_Y] or self.joystick_msg.buttons[RIGHT_STICK_CLICK] or self.joystick_msg.buttons[CHANGE_VIEW]
+        or self.joystick_msg.buttons[MENU]):
 
 
             #Shoulder Roll 
@@ -107,22 +108,27 @@ class Arm_Control(Node):
             self.joint_msg.joint_names.append("Elbow Pitch")
             self.joint_msg.velocities.append(self.joystick_msg.buttons[Y] - self.joystick_msg.buttons[A])
 
+            self.joint_msg.joint_names.append("Wrist Roll")
+            self.joint_msg.velocities.append(self.joystick_msg.buttons[RIGHT_STICK_CLICK]- self.joystick_msg.buttons[LEFT_STICK_CLICK])
+
+            self.joint_msg.joint_names.append("Wrist Pitch")
+            self.joint_msg.velocities.append(self.joystick_msg.buttons[CHANGE_VIEW]- self.joystick_msg.buttons[MENU])
             return False 
 
-        self.twist_msg.twist.linear.z = self.joystick_msg.axes[RIGHT_STICK_Y]
-        self.twist_msg.twist.linear.y = self.joystick_msg.axes[RIGHT_STICK_X]
+        self.twist_msg.twist.linear.z = -(self.joystick_msg.axes[RIGHT_STICK_Y])
+        self.twist_msg.twist.linear.x = self.joystick_msg.axes[RIGHT_STICK_X]
         
         
-        lin_x_right = -0.5 * (self.joystick_msg.axes[RIGHT_TRIGGER]- Axis_Default["RIGHT_TRIGGER"])
-        lin_x_left = 0.5 * (self.joystick_msg.axes[LEFT_TRIGGER]- Axis_Default["LEFT_TRIGGER"])
-        self.twist_msg.twist.linear.x = lin_x_right + lin_x_left
+        lin_y_right = 0.5 * (self.joystick_msg.axes[RIGHT_TRIGGER]- Axis_Default["RIGHT_TRIGGER"])
+        lin_y_left = -0.5 * (self.joystick_msg.axes[LEFT_TRIGGER]- Axis_Default["LEFT_TRIGGER"])
+        self.twist_msg.twist.linear.y = lin_y_right + lin_y_left
 
         self.twist_msg.twist.angular.y = self.joystick_msg.axes[LEFT_STICK_Y]
         self.twist_msg.twist.angular.x = self.joystick_msg.axes[LEFT_STICK_X]
         
         roll_postive = 1.0 * self.joystick_msg.buttons[RIGHT_BUMPER]
         roll_negative = (-1.0) * self.joystick_msg.buttons[LEFT_BUMPER]
-        self.twist_msg.twist.angular.z = roll_negative + roll_postive
+        self.twist_msg.twist.angular.y = roll_negative + roll_postive
 
         return True
 
