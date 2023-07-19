@@ -62,7 +62,7 @@
     <visual>
       <origin
         xyz="0 0 0"
-        rpy="0.740762263510472 -1.5707963267949 0" />
+        rpy="0 0 0" />
       <geometry>
         <mesh
           filename="package://description/meshes/base_joint.STL" />
