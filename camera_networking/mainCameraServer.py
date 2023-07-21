@@ -4,6 +4,7 @@ import cv2.aruco as aruco
 import cv2
 import pickle
 import numpy as np
+import os
 #import matplotlib
 
 ##-----------------------------------------------------------------------------------------#
@@ -18,6 +19,7 @@ DISMES = '!END' ## Message to disconnect from server
 ##-----------------------------------------------------------------------------------------#
 ## START
 def start():
+    os.environ['QT_QPA_PLATFORM'] = 'wayland'
     print('[SERVER] STARTING UP')
     host = socket.socket(socket.AF_INET , socket.SOCK_STREAM) ## Creates stream type server
     host.bind(ADDR) ## Binds Server to adress

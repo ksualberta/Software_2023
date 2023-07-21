@@ -3,6 +3,7 @@ import threading
 import pickle
 import numpy as np
 import cv2
+import os
 
 FORMAT = "utf-8"
 HEADER = 16
@@ -37,6 +38,7 @@ def handle_client(connection:socket.socket,addr):
 def start_server():
     server = socket.socket(family=socket.AF_INET,type=socket.SOCK_STREAM)
     server.bind(ADDR)
+    os.environ['QT_QPA_PLATFORM'] = 'wayland'
 
     server.listen()
 
