@@ -115,16 +115,16 @@ class Arm_Control(Node):
             self.joint_msg.velocities.append(self.joystick_msg.buttons[CHANGE_VIEW]- self.joystick_msg.buttons[MENU])
             return False 
 
-        self.twist_msg.twist.linear.z = -(self.joystick_msg.axes[RIGHT_STICK_Y])
-        self.twist_msg.twist.linear.y = self.joystick_msg.axes[RIGHT_STICK_X]
+        self.twist_msg.twist.linear.z = -(self.joystick_msg.axes[LEFT_STICK_Y])
+        self.twist_msg.twist.linear.y = self.joystick_msg.axes[LEFT_STICK_X]
         
         
         lin_x_right = -0.5 * (self.joystick_msg.axes[RIGHT_TRIGGER]- Axis_Default["RIGHT_TRIGGER"])
         lin_x_left = 0.5 * (self.joystick_msg.axes[LEFT_TRIGGER]- Axis_Default["LEFT_TRIGGER"])
         self.twist_msg.twist.linear.x = lin_x_right + lin_x_left
 
-        self.twist_msg.twist.angular.y = self.joystick_msg.axes[LEFT_STICK_Y]
-        self.twist_msg.twist.angular.x = self.joystick_msg.axes[LEFT_STICK_X]
+        self.twist_msg.twist.angular.y = self.joystick_msg.axes[RIGHT_STICK_Y]
+        self.twist_msg.twist.angular.x = self.joystick_msg.axes[RIGHT_STICK_X]
         
         roll_postive = 1.0 * self.joystick_msg.buttons[RIGHT_BUMPER]
         roll_negative = (-1.0) * self.joystick_msg.buttons[LEFT_BUMPER]
