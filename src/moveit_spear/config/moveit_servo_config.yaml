@@ -14,7 +14,7 @@
 
       ## Properties of outgoing commands
       publish_period: 0.034  # 1/Nominal publish rate [seconds]
-      low_latency_mode: false  # Set this to true to publish as soon as an incoming Twist command is received (publish_period is ignored)
+      low_latency_mode: true  # Set this to true to publish as soon as an incoming Twist command is received (publish_period is ignored)
 
       # What type of topic does your robot driver expect?
       # Currently supported are std_msgs/Float64MultiArray or trajectory_msgs/JointTrajectory
@@ -60,7 +60,7 @@
       command_out_topic: /Arm_Group_controller/joint_trajectory # Publish outgoing commands here
 
       ## Collision checking for the entire robot body
-      check_collisions: false # Check collisions?
+      check_collisions: true # Check collisions?
       collision_check_rate: 10.0 # [Hz] Collision-checking can easily bog down a CPU if done too often.
       self_collision_proximity_threshold: 0.01 # Start decelerating when a self-collision is this far [m]
       scene_collision_proximity_threshold: 0.02 # Start decelerating when a scene collision is this far [m]
