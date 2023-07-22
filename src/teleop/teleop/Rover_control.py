@@ -70,8 +70,8 @@ class RoverControl(Node):
         self.drive_motors_num = 6 #Number of drive motors
         self.steer_motors_num = 4 #Number of steering motors
 
-        self.steer_right_limit = 1.0472
-        self.steer_left_limit = -1.0472
+        self.steer_right_limit = -1.0472
+        self.steer_left_limit = 1.0472
         self.steer_center = (self.steer_right_limit + self.steer_left_limit)/2
 
         
