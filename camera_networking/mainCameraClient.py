@@ -63,8 +63,8 @@ def video_send(camera , client):
     while camera.isOpened():
         img, frame = camera.read()
         if img == True:
-           # frame = cv2.imencode('.jpg', frame, ENCODEPARAM)[1].tobytes()
-            frame =  frame.tobytes()
+            #frame = cv2.imencode('.jpg', frame, ENCODEPARAM)[1].tobytes()
+            #frame =  frame.tobytes()
             sendData(client, frame)           
 
 
@@ -72,10 +72,19 @@ def video_send(camera , client):
 ## SEND - Intakes data and sends to server
 def sendData(client , msg):
     msg = pickle.dumps(msg)
-    msg_len = str(len(msg)).encode(FORMAT)
-    msg_len += b' ' * (HEADER - len(msg_len))
-    client.send(msg_len)
-    client.send(msg)
+    print(len(msg))
+    msg_one = msg[:int(len(msg)/2)]
+    msg_two = msg[int(len(msg)/2):]
+    msg_one_len = str(len(msg_one)).encode(FORMAT)
+    msg_two_len = str(len(msg_two)).encode(FORMAT)
+    #msg_len = str(len(msg)).encode(FORMAT)
+    #msg_len += b' ' * (HEADER - len(msg_len))
+    msg_one_len += b' ' * (HEADER - len(msg_one_len))
+    msg_two_len += b' ' * (HEADER - len(msg_two_len))
+    client.send(msg_one_len)
+    client.send(msg_one)
+    client.send(msg_two_len)
+    client.send(msg_two)
 
 
 

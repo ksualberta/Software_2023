@@ -62,8 +62,8 @@ def handle_client(conn , addr):
 
             elif msg_type == bytes: ## if list turn into and show image
                 
-                msg = frame = np.frombuffer(frame, dtype=np.byte)
-                #msg = cv2.imdecode(msg, 1)
+                msg = np.frombuffer(msg, dtype=np.byte)
+                msg = cv2.imdecode(msg, 1)
                 aruco_dict = aruco.getPredefinedDictionary(aruco.DICT_4X4_100)
                 parameters = aruco.DetectorParameters()
                 detector = aruco.ArucoDetector(aruco_dict,parameters)

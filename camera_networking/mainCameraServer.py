@@ -19,7 +19,7 @@ DISMES = '!END' ## Message to disconnect from server
 ##-----------------------------------------------------------------------------------------#
 ## START
 def start():
-    os.environ["QT_QPA_PLATFORM"] = "xcb"
+    #os.environ["QT_QPA_PLATFORM"] = "xcb"
     print('[SERVER] STARTING UP')
     host = socket.socket(socket.AF_INET , socket.SOCK_STREAM) ## Creates stream type server
     host.bind(ADDR) ## Binds Server to adress
@@ -44,16 +44,30 @@ def handle_client(conn , addr):
     connected = True ## False to end conn
 
     while connected:
-        msg_len = conn.recv(HEADER).decode(FORMAT) ## Checks Header for message length
-        if msg_len: ## Check for no data
-            msg_len = int(msg_len) 
-            msg = b'' ## msg is the actual data being transfered
-            while len(msg) < msg_len: ## Collects all data to msg
-                msg_temp = conn.recv(msg_len-len(msg)) ## ensures all data collected
-                msg += msg_temp
+        msg_one_len = conn.recv(HEADER).decode(FORMAT) ## Checks Header for message length
+        if msg_one_len: ## Check for no data
+            msg_one_len = int(msg_one_len) 
+            msg_one = b'' ## msg is the actual data being transfered
+            while len(msg_one) < msg_one_len: ## Collects all data to msg
+                msg_temp = conn.recv(msg_one_len-len(msg_one)) ## ensures all data collected
+                msg_one += msg_temp
 
+        msg_two_len = conn.recv(HEADER).decode(FORMAT)
+
+        if msg_two_len:
+            msg_two_len = int(msg_two_len) 
+            msg_two = b'' ## msg is the actual data being transfered
+            while len(msg_two) < msg_two_len: ## Collects all data to msg
+                msg_temp = conn.recv(msg_two_len-len(msg_two)) ## ensures all data collected
+                msg_two += msg_temp  
+
+        if msg_one_len and msg_two_len:
+            msg = msg_one + msg_two          
             msg = pickle.loads(msg) ## Collected Message Unloaded
             msg_type = type(msg)
+            
+            print(type(msg))
+            
 
             if msg_type ==  str : ## if string show in console, or Disconnecting
                 if msg == DISMES:
@@ -62,10 +76,12 @@ def handle_client(conn , addr):
                 else: 
                     print(f'[CLIENT {addr}] {msg}')
 
-            elif msg_type == bytes: ## if list turn into and show image
-                
-                msg = np.frombuffer(msg,np.byte) ## Byte Repair
-                msg = cv2.imdecode(msg, 1)
+            #elif msg_type == bytes: ## if list turn into and show image
+            else:    
+                #print("made it here")
+
+                #msg = np.frombuffer(msg,np.byte) ## Byte Repair
+                #msg = cv2.imdecode(msg, 1)
                 aruco_dict = aruco.getPredefinedDictionary(aruco.DICT_4X4_100)
                 parameters = aruco.DetectorParameters()
                 detector = aruco.ArucoDetector(aruco_dict,parameters)
