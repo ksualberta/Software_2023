@@ -6,14 +6,14 @@ import numpy as np
 
 ##-----------------------------------------------------------------------------------------#
 ## CONSTANT VALUES
-PORT   = 7505
+PORT   = 7506
 #SERVER = "192.168.1.2" ## ez adress switch
 SERVER = "192.168.1.1"
 ADDR   = (SERVER , PORT) ## basic informaton for contacting server
 HEADER = 16 ## How big the header is on the incoming info
 FORMAT = 'utf-8' ## Format of the bytes used
 DISMES = '!END' ## Message to disconnect from server
-JPEGQUALITY = 100 ## Quality of image outgoing 0-100
+JPEGQUALITY = 25 ## Quality of image outgoing 0-100
 ENCODEPARAM = [int(cv2.IMWRITE_JPEG_QUALITY), JPEGQUALITY]
 
 SPLIT_RATE = 10
