@@ -10,7 +10,7 @@ import os
 ##-----------------------------------------------------------------------------------------#
 ## CONSTANT VALUES
 PORT   = 7505
-SERVER = socket.gethostbyname(socket.gethostname()) 
+SERVER = "0.0.0.0" 
 ADDR   = (SERVER , PORT) ## basic informaton for contacting server
 HEADER = 16 ## How big the header is on the incoming info
 FORMAT = 'utf-8' ## Format of the bytes used
@@ -19,7 +19,7 @@ DISMES = '!END' ## Message to disconnect from server
 ##-----------------------------------------------------------------------------------------#
 ## START
 def start():
-    os.environ['QT_QPA_PLATFORM'] = 'wayland'
+    os.environ["QT_QPA_PLATFORM"] = "xcb"
     print('[SERVER] STARTING UP')
     host = socket.socket(socket.AF_INET , socket.SOCK_STREAM) ## Creates stream type server
     host.bind(ADDR) ## Binds Server to adress

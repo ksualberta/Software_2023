@@ -7,13 +7,13 @@ import numpy as np
 ##-----------------------------------------------------------------------------------------#
 ## CONSTANT VALUES
 PORT   = 7505
-SERVER = socket.gethostbyname(socket.gethostname()) ## ez adress switch
-#SERVER = socket.gethostbyname(socket.gethostname())
+#SERVER = "192.168.1.2" ## ez adress switch
+SERVER = socket.gethostbyname(socket.gethostname())
 ADDR   = (SERVER , PORT) ## basic informaton for contacting server
 HEADER = 16 ## How big the header is on the incoming info
 FORMAT = 'utf-8' ## Format of the bytes used
 DISMES = '!END' ## Message to disconnect from server
-JPEGQUALITY = 25 ## Quality of image outgoing 0-100
+JPEGQUALITY = 100 ## Quality of image outgoing 0-100
 ENCODEPARAM = [int(cv2.IMWRITE_JPEG_QUALITY), JPEGQUALITY]
 
 SD  = (480  , 640 )
@@ -63,7 +63,8 @@ def video_send(camera , client):
     while camera.isOpened():
         img, frame = camera.read()
         if img == True:
-            frame = cv2.imencode('.jpg', frame, ENCODEPARAM)[1].tobytes()
+           # frame = cv2.imencode('.jpg', frame, ENCODEPARAM)[1].tobytes()
+            frame =  frame.tobytes()
             sendData(client, frame)           
 
 
