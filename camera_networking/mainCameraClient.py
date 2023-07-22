@@ -8,7 +8,7 @@ import numpy as np
 ## CONSTANT VALUES
 PORT   = 7505
 #SERVER = "192.168.1.2" ## ez adress switch
-SERVER = socket.gethostbyname(socket.gethostname())
+SERVER = "192.168.1.1"
 ADDR   = (SERVER , PORT) ## basic informaton for contacting server
 HEADER = 16 ## How big the header is on the incoming info
 FORMAT = 'utf-8' ## Format of the bytes used
