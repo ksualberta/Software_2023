@@ -6,9 +6,9 @@ import numpy as np
 
 ##-----------------------------------------------------------------------------------------#
 ## CONSTANT VALUES
-PORT   = 7506
+PORT   = 7505
 #SERVER = "192.168.1.2" ## ez adress switch
-SERVER = "192.168.1.1"
+SERVER = socket.gethostbyname(socket.gethostname())
 ADDR   = (SERVER , PORT) ## basic informaton for contacting server
 HEADER = 16 ## How big the header is on the incoming info
 FORMAT = 'utf-8' ## Format of the bytes used
@@ -81,6 +81,7 @@ def split_data(client:socket.socket, msg:bytes, split_rate:int)-> None:
     """
     main_message = pickle.dumps(msg)
     main_message_length = len(main_message)
+    print(main_message_length)
     
     msg_length = int(main_message_length/split_rate)
 
@@ -91,12 +92,17 @@ def split_data(client:socket.socket, msg:bytes, split_rate:int)-> None:
 
     while i <= split_rate:
         lower_bound = (i - 1) * msg_length
-        upper_bound = i * msg_length
+        if i != split_rate:
+            upper_bound = i * msg_length
 
-        temp_msg = main_message[lower_bound:upper_bound]
+            temp_msg = main_message[lower_bound:upper_bound]
+        else:
+
+            temp_msg = main_message[lower_bound:]
+            
+
         temp_len = str(len(temp_msg)).encode(FORMAT)
         temp_len += b' ' * (HEADER - len(temp_len))
-
         msg_list.append(temp_msg)
         msg_len_list.append(temp_len)
         i+=1
