@@ -14,6 +14,23 @@ drive_topic = "/Rover/drive_commands"
 steer_topic = "/Rover/steer_commands"
 joy_topic = "/Rover/Joy_Topic"
 
+"""
+Actuator ID:
+
+Drive Motor Front Left =   10 
+Drive MOtor Middle Left =  11
+Drive Motor Back Left =    12
+Drive Motor Front Right =  13
+Drive Motor Middle Right = 14
+Drive Motor Back Right =   15
+
+Steering Motor Front Left =  20
+Steering Motor Front Right = 21
+Steering Motor Back Left =   22
+Steering Motor Back Right =  23
+
+"""
+
 class Ros_2_Can(Node):
 
     def __init__(self):
@@ -94,7 +111,7 @@ class Ros_2_Can(Node):
                 velocity = self.drive_msg.data[i]
                 
                 # Convert the 32-bit float velocity to 4 bytes
-                velocity_bytes = struct.pack('Bf', i, velocity)
+                velocity_bytes = struct.pack('Bf', i + 10, velocity)
                     
                 # Create a CAN message
                 can_msg = can.Message(arbitration_id=arbitration_id, data=velocity_bytes, is_extended_id=True)
@@ -116,12 +133,12 @@ class Ros_2_Can(Node):
         can_messages = []
 
         try: 
-            for i in range(4):
+            for acc_id in range(4):
                 arbitration_id = (priority << 24) | (frame_id << 8) | self.node_id
-                velocity = self.steer_msg.data[i]
+                velocity = self.steer_msg.data[acc_id]
                 
                 # Convert the 32-bit float velocity to 4 bytes
-                position_bytes = struct.pack('Bf', (i + 6) ,velocity) 
+                position_bytes = struct.pack('Bf', (acc_id + 20) ,velocity) 
                     
                 # Create a CAN message
                 can_msg = can.Message(arbitration_id=arbitration_id, data=position_bytes, is_extended_id=True)
