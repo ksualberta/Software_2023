@@ -12,7 +12,15 @@ import struct
 
 #Topic names
 
-#
+"""
+Actuator ID:
+Shoulder Roll =
+Shoulder Pitch =
+Elbow Roll =
+Elbow Pitch =
+Wrist Roll =
+Wrist Pitch  =
+"""
 
 joint_traj_topic = "/Arm_Group_controller/joint_trajectory"
 joint_states_topics = "/joint_states"
