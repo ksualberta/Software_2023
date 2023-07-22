@@ -63,7 +63,7 @@ def video_send(camera , client):
     while camera.isOpened():
         img, frame = camera.read()
         if img == True:
-            #frame = cv2.imencode('.jpg', frame, ENCODEPARAM)[1].tobytes()
+            frame = cv2.imencode('.jpg', frame, ENCODEPARAM)[1].tobytes()
             #frame =  frame.tobytes()
             sendData(client, frame)           
 
