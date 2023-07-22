@@ -7,13 +7,13 @@ import numpy as np
 ##-----------------------------------------------------------------------------------------#
 ## CONSTANT VALUES
 PORT   = 7505
-SERVER = socket.gethostbyname(socket.gethostname()) ## ez adress switch
-#SERVER = socket.gethostbyname(socket.gethostname())
+#SERVER = "192.168.1.2" ## ez adress switch
+SERVER = socket.gethostbyname(socket.gethostname())
 ADDR   = (SERVER , PORT) ## basic informaton for contacting server
 HEADER = 16 ## How big the header is on the incoming info
 FORMAT = 'utf-8' ## Format of the bytes used
 DISMES = '!END' ## Message to disconnect from server
-JPEGQUALITY = 25 ## Quality of image outgoing 0-100
+JPEGQUALITY = 100 ## Quality of image outgoing 0-100
 ENCODEPARAM = [int(cv2.IMWRITE_JPEG_QUALITY), JPEGQUALITY]
 
 SD  = (480  , 640 )
@@ -63,7 +63,8 @@ def video_send(camera , client):
     while camera.isOpened():
         img, frame = camera.read()
         if img == True:
-            frame = cv2.imencode('.jpg', frame, ENCODEPARAM)[1].tobytes()
+            #frame = cv2.imencode('.jpg', frame, ENCODEPARAM)[1].tobytes()
+            #frame =  frame.tobytes()
             sendData(client, frame)           
 
 
@@ -71,10 +72,19 @@ def video_send(camera , client):
 ## SEND - Intakes data and sends to server
 def sendData(client , msg):
     msg = pickle.dumps(msg)
-    msg_len = str(len(msg)).encode(FORMAT)
-    msg_len += b' ' * (HEADER - len(msg_len))
-    client.send(msg_len)
-    client.send(msg)
+    print(len(msg))
+    msg_one = msg[:int(len(msg)/2)]
+    msg_two = msg[int(len(msg)/2):]
+    msg_one_len = str(len(msg_one)).encode(FORMAT)
+    msg_two_len = str(len(msg_two)).encode(FORMAT)
+    #msg_len = str(len(msg)).encode(FORMAT)
+    #msg_len += b' ' * (HEADER - len(msg_len))
+    msg_one_len += b' ' * (HEADER - len(msg_one_len))
+    msg_two_len += b' ' * (HEADER - len(msg_two_len))
+    client.send(msg_one_len)
+    client.send(msg_one)
+    client.send(msg_two_len)
+    client.send(msg_two)
 
 
 
