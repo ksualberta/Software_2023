@@ -50,17 +50,20 @@ def get_message(connection:socket.socket,split_rate:int)->bytes:
 
     i = 0
     while i < split_rate:
-        msg_length = connection.recv(HEADER).decode(FORMAT)
-        msg_length = int(msg_length)
+        try:
+            msg_length = connection.recv(HEADER).decode(FORMAT)
+            msg_length = int(msg_length)
 
-        if msg_length:
-            msg = b''
+            if msg_length:
+                msg = b''
 
-            while len(msg) < msg_length:
-                msg += connection.recv(msg_length - len(msg))
+                while len(msg) < msg_length:
+                    msg += connection.recv(msg_length - len(msg))
             
-            returnMessage += msg
-            i+=1
+                returnMessage += msg
+                i+=1
+        except:
+            print("Error")
 
     return returnMessage
 
@@ -78,34 +81,36 @@ def handle_client(conn:socket.socket , addr):
 
         if split_msg:
             msg = get_message(conn,split_msg)
-            msg = pickle.loads(msg)
-            print(len(msg))
-            msg_type = type(msg)
-            if msg_type ==  str :
-                if msg == DISMES:
-                    print(f'[CLIENT {addr}] DISCONNECTING')
-                    connected = False
-                else:
-                    print(f'[CLIENT {addr}] {msg}')
-            elif msg_type == bytes:
-                msg = np.frombuffer(msg,np.byte)
-                msg = cv2.imdecode(msg, 1)
-                aruco_dict = aruco.getPredefinedDictionary(aruco.DICT_4X4_100)
-                parameters = aruco.DetectorParameters()
-                detector = aruco.ArucoDetector(aruco_dict,parameters)
-                corners, ids, rejectedImgPoints = detector.detectMarkers(image=msg)
+            try:
+                msg = pickle.loads(msg)
+                print(len(msg))
+                msg_type = type(msg)
+                if msg_type ==  str :
+                    if msg == DISMES:
+                        print(f'[CLIENT {addr}] DISCONNECTING')
+                        connected = False
+                    else:
+                        print(f'[CLIENT {addr}] {msg}')
+                elif msg_type == bytes:
+                    msg = np.frombuffer(msg,np.byte)
+                    msg = cv2.imdecode(msg, 1)
+                    aruco_dict = aruco.getPredefinedDictionary(aruco.DICT_4X4_100)
+                    parameters = aruco.DetectorParameters()
+                    detector = aruco.ArucoDetector(aruco_dict,parameters)
+                    corners, ids, rejectedImgPoints = detector.detectMarkers(image=msg)
 
-                if type(ids) == type(None):
-                   cv2.imshow("RECIVEDVIDEO", msg)
-                else:
-                   for id in ids:
-                        print("[DETECED MARKER]: {}\n".format(id))
-                        editedFrame = aruco.drawDetectedMarkers(image=msg.copy(),corners=corners,ids=ids)
-                        cv2.imshow("DETECTED IMAGE",editedFrame)
-
-                key = cv2.waitKey(1) & 0xFF
-                if key == ord('q'): ## if q is pressed disconnect
-                    connected = False
+                    if type(ids) == type(None):
+                        cv2.imshow("RECIVEDVIDEO", msg)
+                    else:
+                        for id in ids:
+                            print("[DETECED MARKER]: {}\n".format(id))
+                            editedFrame = aruco.drawDetectedMarkers(image=msg.copy(),corners=corners,ids=ids)
+                            cv2.imshow("DETECTED IMAGE",editedFrame)
+            except:
+                ok = 1
+            key = cv2.waitKey(1) & 0xFF
+            if key == ord('q'): ## if q is pressed disconnect
+                connected = False
         #msg_one_len = conn.recv(HEADER).decode(FORMAT) ## Checks Header for message length
         #if msg_one_len: ## Check for no data
          #   msg_one_len = int(msg_one_len) 

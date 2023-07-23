@@ -17,7 +17,7 @@ DISMES = '!END' ## Message to disconnect from server
 JPEGQUALITY = 25 ## Quality of image outgoing 0-100
 ENCODEPARAM = [int(cv2.IMWRITE_JPEG_QUALITY), JPEGQUALITY]
 
-SPLIT_RATE = 1000
+SPLIT_RATE = 1
 
 SD  = (480  , 640 )
 HD  = (720  , 1280)
