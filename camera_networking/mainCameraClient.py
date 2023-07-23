@@ -2,13 +2,14 @@ import socket
 import cv2
 import pickle
 import numpy as np
+import time
 #import matplotlib
 
 ##-----------------------------------------------------------------------------------------#
 ## CONSTANT VALUES
 PORT   = 7505
 #SERVER = "192.168.1.2" ## ez adress switch
-SERVER = socket.gethostbyname(socket.gethostname())
+SERVER = "192.168.1.1"
 ADDR   = (SERVER , PORT) ## basic informaton for contacting server
 HEADER = 16 ## How big the header is on the incoming info
 FORMAT = 'utf-8' ## Format of the bytes used
@@ -16,7 +17,7 @@ DISMES = '!END' ## Message to disconnect from server
 JPEGQUALITY = 25 ## Quality of image outgoing 0-100
 ENCODEPARAM = [int(cv2.IMWRITE_JPEG_QUALITY), JPEGQUALITY]
 
-SPLIT_RATE = 10
+SPLIT_RATE = 1000
 
 SD  = (480  , 640 )
 HD  = (720  , 1280)
@@ -84,9 +85,6 @@ def split_data(client:socket.socket, msg:bytes, split_rate:int)-> None:
     main_message = pickle.dumps(msg)
     main_message_length = len(main_message)
 
-    if (main_message_length % 2 != 0):
-        print("ODD length")
-
     print(main_message_length)
     
     msg_length = int(main_message_length/split_rate)
@@ -129,6 +127,41 @@ def split_data(client:socket.socket, msg:bytes, split_rate:int)-> None:
     #client.send(msg_two)
 
 
+def alternate_split_and_send(client:socket.socket,message:bytes,split_rate):
+    """
+    Parameters: Client, message, and split rate\n
+    Function: Splits the messages into 'split rate' number of messages and message lengths\n
+    Affects: Affects the client by internalling calling send_data() method\n
+    Returns: Nothing
+    """
+    
+
+    main_message = pickle.dumps(msg)
+    main_message_length = len(main_message)
+
+    print(main_message_length)
+    
+    msg_length = int(main_message_length/split_rate)
+
+    msg_list = list()
+    #msg_len_list = list()
+
+    i = 1
+
+    while i <= split_rate:
+        lower_bound = (i - 1) * msg_length
+        if i != split_rate:
+            upper_bound = i * msg_length
+
+            temp_msg = main_message[lower_bound:upper_bound]
+        else:
+
+            temp_msg = main_message[lower_bound:] 
+        
+        temp_msg += b''
+
+
+
 
 def send_data(client:socket.socket,msg_list:list,msg_len_list:list):
     """
@@ -145,9 +178,12 @@ def send_data(client:socket.socket,msg_list:list,msg_len_list:list):
     client.send(split_rate_msg_len)
     client.send(split_rate_msg)
 
+    
     while i < len(msg_list):
         client.send(msg_len_list[i])
+        #print(msg_list[i])
         client.send(msg_list[i])
+        #time.sleep(1)
         i+=1
 
 
