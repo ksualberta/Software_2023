@@ -79,8 +79,14 @@ def split_data(client:socket.socket, msg:bytes, split_rate:int)-> None:
     Affects: Affects the client by internalling calling send_data() method\n
     Returns: Nothing
     """
+    
+
     main_message = pickle.dumps(msg)
     main_message_length = len(main_message)
+
+    if (main_message_length % 2 != 0):
+        print("ODD length")
+
     print(main_message_length)
     
     msg_length = int(main_message_length/split_rate)

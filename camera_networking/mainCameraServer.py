@@ -79,6 +79,7 @@ def handle_client(conn:socket.socket , addr):
         if split_msg:
             msg = get_message(conn,split_msg)
             msg = pickle.loads(msg)
+            print(len(msg))
             msg_type = type(msg)
             if msg_type ==  str :
                 if msg == DISMES:
