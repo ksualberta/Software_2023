@@ -7,6 +7,8 @@ from rclpy.qos import QoSProfile
 import time
 import numpy as np
 from rclpy.time import Time
+import sys
+
 
 drive_topic = "/Rover/drive_commands"
 steer_topic = "/Rover/steer_commands"
