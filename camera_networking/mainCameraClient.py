@@ -9,7 +9,8 @@ import time
 ## CONSTANT VALUES
 PORT   = 7505
 #SERVER = "192.168.1.2" ## ez adress switch
-SERVER = "192.168.1.1"
+SERVER = socket.gethostbyname(socket.gethostname())
+THREAD = 1
 ADDR   = (SERVER , PORT) ## basic informaton for contacting server
 HEADER = 16 ## How big the header is on the incoming info
 FORMAT = 'utf-8' ## Format of the bytes used
@@ -25,7 +26,7 @@ FHD = (1080 , 1920) ## STANDARD MONITOR
 QHD = (1440 , 2560) ## NOT WORK
 UHD = (2160 , 3840) ## NOT WORK
 
-REZ = FHD
+REZ = SD
 
 CAMID = 0 ## ID of camera, depends on how many devices you have
 
@@ -85,7 +86,6 @@ def split_data(client:socket.socket, msg:bytes, split_rate:int)-> None:
     main_message = pickle.dumps(msg)
     main_message_length = len(main_message)
 
-    print(main_message_length)
     
     msg_length = int(main_message_length/split_rate)
 
@@ -112,64 +112,21 @@ def split_data(client:socket.socket, msg:bytes, split_rate:int)-> None:
         i+=1
 
     send_data(client,msg_list,msg_len_list)
-    #print(len(msg))
-    #msg_one = msg[:int(len(msg)/2)]
-    #msg_two = msg[int(len(msg)/2):]
-    #msg_one_len = str(len(msg_one)).encode(FORMAT)
-    #msg_two_len = str(len(msg_two)).encode(FORMAT)
-    #msg_len = str(len(msg)).encode(FORMAT)
-    #msg_len += b' ' * (HEADER - len(msg_len))
-    #msg_one_len += b' ' * (HEADER - len(msg_one_len))
-    #msg_two_len += b' ' * (HEADER - len(msg_two_len))
-    #client.send(msg_one_len)
-    #client.send(msg_one)
-    #client.send(msg_two_len)
-    #client.send(msg_two)
-
-
-def alternate_split_and_send(client:socket.socket,message:bytes,split_rate):
-    """
-    Parameters: Client, message, and split rate\n
-    Function: Splits the messages into 'split rate' number of messages and message lengths\n
-    Affects: Affects the client by internalling calling send_data() method\n
-    Returns: Nothing
-    """
-    
-
-    main_message = pickle.dumps(msg)
-    main_message_length = len(main_message)
-
-    print(main_message_length)
-    
-    msg_length = int(main_message_length/split_rate)
-
-    msg_list = list()
-    #msg_len_list = list()
-
-    i = 1
-
-    while i <= split_rate:
-        lower_bound = (i - 1) * msg_length
-        if i != split_rate:
-            upper_bound = i * msg_length
-
-            temp_msg = main_message[lower_bound:upper_bound]
-        else:
-
-            temp_msg = main_message[lower_bound:] 
-        
-        temp_msg += b''
-
-
-
 
 def send_data(client:socket.socket,msg_list:list,msg_len_list:list):
     """
     Recieves the client, the split messages, and the split messages' lengths\n
-    First send the split rate to the server\n
+    First, send the thread Id
+    Then send the split rate to the server\n
     Then sends each len and message tuple to the server\n
     """
     i = 0
+
+    thread_message = str(THREAD).encode(FORMAT)
+    thread_message_len = str(len(thread_message)).encode(FORMAT)
+    thread_message_len += b' ' * (HEADER - len(thread_message_len))
+    client.send(thread_message_len)
+    client.send(thread_message)
 
     split_rate_msg = str(len(msg_list)).encode(FORMAT)
     split_rate_msg_len = str(len(split_rate_msg)).encode(FORMAT)
@@ -181,9 +138,7 @@ def send_data(client:socket.socket,msg_list:list,msg_len_list:list):
     
     while i < len(msg_list):
         client.send(msg_len_list[i])
-        #print(msg_list[i])
         client.send(msg_list[i])
-        #time.sleep(1)
         i+=1
 
 

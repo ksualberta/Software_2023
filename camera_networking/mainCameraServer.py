@@ -5,10 +5,11 @@ import cv2
 import pickle
 import numpy as np
 import os
-#import matplotlib
+from tkinter import *
+from PIL import ImageTk,Image
 
-##-----------------------------------------------------------------------------------------#
-## CONSTANT VALUES
+
+
 PORT   = 7505
 SERVER = "0.0.0.0" 
 ADDR   = (SERVER , PORT) ## basic informaton for contacting server
@@ -16,8 +17,7 @@ HEADER = 16 ## How big the header is on the incoming info
 FORMAT = 'utf-8' ## Format of the bytes used
 DISMES = '!END' ## Message to disconnect from server
 
-##-----------------------------------------------------------------------------------------#
-## START
+
 def start():
     #os.environ["QT_QPA_PLATFORM"] = "xcb"
     print('[SERVER] STARTING UP')
@@ -28,14 +28,20 @@ def start():
     print(f'[SERVER] LISTENING ON {SERVER}, {PORT}')
     main_run(host)
 
-##-----------------------------------------------------------------------------------------#
-## MAIN RUN - Intakes Host Socket
+
 def main_run(host):
+    label_tuple = create_main_window()
+    main_window = label_tuple[3]
     while True:
         conn , addr = host.accept() # Accepts and stores incoming conneciton
-        thread = threading.Thread(target = handle_client, args= (conn, addr)) 
+        thread = threading.Thread(target = handle_client, args= (conn, addr, label_tuple,main_window)) 
         thread.start() # Puts each client on own thread
         print(f'[SERVER] NEW CONNECTION : {threading.active_count()-1} ACTIVE')
+        main_window.mainloop()
+        
+    
+    
+    
 
 
 def get_message(connection:socket.socket,split_rate:int)->bytes:
@@ -68,13 +74,67 @@ def get_message(connection:socket.socket,split_rate:int)->bytes:
     return returnMessage
 
 
-##-----------------------------------------------------------------------------------------#
-## HANDEL CLIENT - Intakes connection and its adrress
-def handle_client(conn:socket.socket , addr):
+def create_main_window()->tuple:
+    """
+    Creates main window and a frame inside of that window\n
+    Creates three labels that in frame:\n
+    1. main-cam, 2. aruco-detected, 3. hand-camera\n
+    Returns labels as such: Tuple(main-cam, aruco-detected, hand-camera)
+    """
+    rez = (640,480)
+
+    #create the main window in tkinter
+    mainWindow = Tk()
+    mainWindow.geometry(newGeometry="{}x{}".format(rez[0] * 2, rez[1] * 2))
+    mainWindow.title("SPEAR MAIN FEED")
+
+    pil_image = Image.open("Software_2023/camera_networking/placeholder.png")
+    image = ImageTk.PhotoImage(image=pil_image)
+
+    #create the three labels that will be controlled
+    mainFeedLabel = Label(image=image,master=mainWindow,width=rez[0],height=rez[1],highlightbackground='red',highlightthickness=2)
+    arucoFeedLabel = Label(image=image,master=mainWindow,width=rez[0],height=rez[1],highlightbackground='green',highlightthickness=2)
+    handCameraLabel = Label(image=image,master=mainWindow,width=rez[0],height=rez[1],highlightbackground='blue',highlightthickness=2)
+    blankCameraLabel = Label(image=image,master=mainWindow,width=rez[0],height=rez[1],highlightbackground='orange',highlightthickness=2)
+
+    #place the labels on the main window using grid
+
+    mainFeedLabel.grid(row=0,column=0)
+    arucoFeedLabel.grid(row=0,column=1)
+    handCameraLabel.grid(row=1,column=0)
+    blankCameraLabel.grid(row=1,column=1)
+    #mainWindow.mainloop()
+
+    return (mainFeedLabel,arucoFeedLabel,handCameraLabel,mainWindow)
+
+
+def update_label(label:Label,img:np.ndarray):
+    """
+    Takes in the label to update and the image to update with\n
+    Sets the label using the PIL library
+    Updates the frame
+    """
+    rgb_image = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    pil_image = Image.fromarray(rgb_image)
+    image = ImageTk.PhotoImage(image=pil_image)
+    label.config(image=image)
+    label.image = image 
+
+
+def handle_client(conn:socket.socket , addr, label_tuple:tuple,main_window:Tk):
+    """
+    Takes the new connection and it's IP address.\n
+    Uses this send each connection to it's respective frame in the Tkinter frame
+    Updates the Tkingter frames in the respective frames
+    """
     print(f'[SERVER] NEW CONNECTION AT {addr}')
     connected = True ## False to end conn
 
     while connected:
+        thread_msg_length = conn.recv(HEADER).decode(FORMAT)
+        thread_msg = conn.recv(int(thread_msg_length)).decode(FORMAT)
+        thread_msg = int(thread_msg)       
+
         split_msg_length = conn.recv(HEADER).decode(FORMAT)
         split_msg = conn.recv(int(split_msg_length)).decode(FORMAT)
         split_msg = int(split_msg)
@@ -83,7 +143,7 @@ def handle_client(conn:socket.socket , addr):
             msg = get_message(conn,split_msg)
             try:
                 msg = pickle.loads(msg)
-                print(len(msg))
+
                 msg_type = type(msg)
                 if msg_type ==  str :
                     if msg == DISMES:
@@ -94,78 +154,32 @@ def handle_client(conn:socket.socket , addr):
                 elif msg_type == bytes:
                     msg = np.frombuffer(msg,np.byte)
                     msg = cv2.imdecode(msg, 1)
-                    aruco_dict = aruco.getPredefinedDictionary(aruco.DICT_4X4_100)
-                    parameters = aruco.DetectorParameters()
-                    detector = aruco.ArucoDetector(aruco_dict,parameters)
-                    corners, ids, rejectedImgPoints = detector.detectMarkers(image=msg)
 
-                    if type(ids) == type(None):
-                        cv2.imshow("RECIVEDVIDEO", msg)
-                    else:
-                        for id in ids:
-                            print("[DETECED MARKER]: {}\n".format(id))
-                            editedFrame = aruco.drawDetectedMarkers(image=msg.copy(),corners=corners,ids=ids)
-                            cv2.imshow("DETECTED IMAGE",editedFrame)
+                    if thread_msg == 1:
+                        aruco_dict = aruco.getPredefinedDictionary(aruco.DICT_4X4_100)
+                        parameters = aruco.DetectorParameters()
+                        detector = aruco.ArucoDetector(aruco_dict,parameters)
+                        corners, ids, rejectedImgPoints = detector.detectMarkers(image=msg)
+
+                        if type(ids) == type(None):
+                            update_label(label_tuple[0],msg)
+                            #cv2.imshow("RECIVEDVIDEO", msg)
+                        else:
+                            for id in ids:
+                                print("[DETECED MARKER]: {}\n".format(id))
+                                editedFrame = aruco.drawDetectedMarkers(image=msg.copy(),corners=corners,ids=ids)
+                                update_label(label_tuple[1],msg)
+                                #cv2.imshow("DETECTED IMAGE",editedFrame)
+                    
+                    elif thread_msg == 2:
+                        update_label(label_tuple[2],msg)
+                    
+                    main_window.update()
             except:
                 ok = 1
             key = cv2.waitKey(1) & 0xFF
             if key == ord('q'): ## if q is pressed disconnect
                 connected = False
-        #msg_one_len = conn.recv(HEADER).decode(FORMAT) ## Checks Header for message length
-        #if msg_one_len: ## Check for no data
-         #   msg_one_len = int(msg_one_len) 
-          #  msg_one = b'' ## msg is the actual data being transfered
-           # while len(msg_one) < msg_one_len: ## Collects all data to msg
-            #    msg_temp = conn.recv(msg_one_len-len(msg_one)) ## ensures all data collected
-             #   msg_one += msg_temp
-
-       # msg_two_len = conn.recv(HEADER).decode(FORMAT)
-
-        #if msg_two_len:
-         #   msg_two_len = int(msg_two_len) 
-          #  msg_two = b'' ## msg is the actual data being transfered
-           # while len(msg_two) < msg_two_len: ## Collects all data to msg
-            #    msg_temp = conn.recv(msg_two_len-len(msg_two)) ## ensures all data collected
-             #   msg_two += msg_temp  
-
-      #  if msg_one_len and msg_two_len:
-       #     msg = msg_one + msg_two          
-        #    msg = pickle.loads(msg) ## Collected Message Unloaded
-         #   msg_type = type(msg)
-            
-          #  print(type(msg))
-            
-
-           # if msg_type ==  str : ## if string show in console, or Disconnecting
-            #    if msg == DISMES:
-             #       print(f'[CLIENT {addr}] DISCONNECTING')
-              #      connected = False
-               # else: 
-                #    print(f'[CLIENT {addr}] {msg}')
-
-            #elif msg_type == bytes: ## if list turn into and show image
-            #else:    
-                #print("made it here")
-
-                #msg = np.frombuffer(msg,np.byte) ## Byte Repair
-                #msg = cv2.imdecode(msg, 1)
-                #aruco_dict = aruco.getPredefinedDictionary(aruco.DICT_4X4_100)
-                #parameters = aruco.DetectorParameters()
-                #detector = aruco.ArucoDetector(aruco_dict,parameters)
-                #corners, ids, rejectedImgPoints = detector.detectMarkers(image=msg)
-
-                #if type(ids) == type(None):
-                   #cv2.imshow("RECIVEDVIDEO", msg)
-                #else:
-                   #for id in ids:
-                        #print("[DETECED MARKER]: {}\n".format(id))
-                        #editedFrame = aruco.drawDetectedMarkers(image=msg.copy(),corners=corners,ids=ids)
-                        #cv2.imshow("DETECTED IMAGE",editedFrame)
-
-                #key = cv2.waitKey(1) & 0xFF
-                #if key == ord('q'): ## if q is pressed disconnect
-                    #connected = False
-                
     conn.close()
     cv2.destroyAllWindows()
     print(f"[SERVER] CLIENT {addr} DISCONNECTED")
