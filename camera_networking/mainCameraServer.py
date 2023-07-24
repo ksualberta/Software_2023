@@ -19,7 +19,7 @@ DISMES = '!END' ## Message to disconnect from server
 
 
 def start():
-    #os.environ["QT_QPA_PLATFORM"] = "xcb"
+    os.environ["QT_QPA_PLATFORM"] = "xcb"
     print('[SERVER] STARTING UP')
     host = socket.socket(socket.AF_INET , socket.SOCK_STREAM) ## Creates stream type server
     host.bind(ADDR) ## Binds Server to adress
