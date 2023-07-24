@@ -26,18 +26,21 @@ def start():
     host.listen(5) ## Server listening for connections with buffer 5
     print('[SERVER] STARTUP COMPLETE')
     print(f'[SERVER] LISTENING ON {SERVER}, {PORT}')
-    main_run(host)
-
-
-def main_run(host):
     label_tuple = create_main_window()
     main_window = label_tuple[3]
+    main_run(host,label_tuple,main_window)
+
+
+def main_run(host,label_tuple,main_window:Tk):
+    connected = True
     while True:
         conn , addr = host.accept() # Accepts and stores incoming conneciton
-        thread = threading.Thread(target = handle_client, args= (conn, addr, label_tuple,main_window)) 
+        thread = threading.Thread(target = handle_client, args= (conn, addr, label_tuple,main_window))
+        thread.daemon = True #need this  
         thread.start() # Puts each client on own thread
         print(f'[SERVER] NEW CONNECTION : {threading.active_count()-1} ACTIVE')
         main_window.mainloop()
+        
         
     
     
@@ -173,7 +176,6 @@ def handle_client(conn:socket.socket , addr, label_tuple:tuple,main_window:Tk):
                     
                     elif thread_msg == 2:
                         update_label(label_tuple[2],msg)
-                    
                     main_window.update()
             except:
                 ok = 1

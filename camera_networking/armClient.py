@@ -54,7 +54,15 @@ def start():
 def cam_set(camID, rez, client):
     print(f'[CLIENT] Linking Camera #{camID}')
     #sendData(client, (f'Linking Camera #{camID}'))
-    camera = cv2.VideoCapture(camID)
+    found = False
+    while not found:
+        try:
+            camera = cv2.VideoCapture(camID)
+            found = True
+        except:
+            print("Camera index: {} not available".format(camID))
+            found = False
+            camID += 1
     camera.set(cv2.CAP_PROP_FRAME_HEIGHT, rez[0])
     camera.set(cv2.CAP_PROP_FRAME_WIDTH, rez[1])
     camera.set(cv2.CAP_PROP_BUFFERSIZE, 2)
