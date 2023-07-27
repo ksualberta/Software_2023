@@ -28,7 +28,12 @@ def start():
     print(f'[SERVER] LISTENING ON {SERVER}, {PORT}')
     label_tuple = create_main_window()
     main_window = label_tuple[3]
-    main_run(host,label_tuple,main_window)
+
+    newThread = threading.Thread(target=main_run,args=[host,label_tuple,main_window])
+    newThread.daemon = True
+    newThread.start()
+    main_window.mainloop()
+    
 
 
 def main_run(host,label_tuple,main_window:Tk):
@@ -39,14 +44,7 @@ def main_run(host,label_tuple,main_window:Tk):
         thread.daemon = True #need this  
         thread.start() # Puts each client on own thread
         print(f'[SERVER] NEW CONNECTION : {threading.active_count()-1} ACTIVE')
-        main_window.mainloop()
         
-        
-    
-    
-    
-
-
 def get_message(connection:socket.socket,split_rate:int)->bytes:
     """
     Parameters: Connection socket and split rate\n
