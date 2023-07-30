@@ -82,7 +82,7 @@ def create_main_window()->tuple:
     1. main-cam, 2. aruco-detected, 3. hand-camera\n
     Returns labels as such: Tuple(main-cam, aruco-detected, hand-camera)
     """
-    rez = (640,480)
+    rez = (700,700)
 
     #create the main window in tkinter
     mainWindow = Tk()
