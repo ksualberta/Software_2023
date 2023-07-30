@@ -1,52 +1,166 @@
 import socket
 import threading
+import cv2.aruco as aruco
+import cv2
 import pickle
 import numpy as np
-import cv2
 import os
+from tkinter import *
+from PIL import ImageTk,Image
 
-FORMAT = "utf-8"
-HEADER = 16
-PORT = 5051
-SERVER = '0.0.0.0'
-ADDR = (SERVER,PORT)
 
-def handle_client(connection:socket.socket,addr):
-    print("[CONNECTION MADE] {}".format(addr))
-    
+
+PORT   = 7505
+SERVER = "0.0.0.0" 
+ADDR   = (SERVER , PORT) ## basic informaton for contacting server
+HEADER = 16 ## How big the header is on the incoming info
+FORMAT = 'utf-8' ## Format of the bytes used
+DISMES = '!END' ## Message to disconnect from server
+
+
+def start():
+    #os.environ["QT_QPA_PLATFORM"] = "xcb"
+    print('[SERVER] STARTING UP')
+    host = socket.socket(socket.AF_INET , socket.SOCK_STREAM) ## Creates stream type server
+    host.bind(ADDR) ## Binds Server to adress
+    host.listen(5) ## Server listening for connections with buffer 5
+    print('[SERVER] STARTUP COMPLETE')
+    print(f'[SERVER] LISTENING ON {SERVER}, {PORT}')
+    main_run(host)
+
+
+def main_run(host):
+    label_tuple = create_main_window()
+    main_window = label_tuple[3]
     while True:
-        messageLength = int(connection.recv(HEADER).decode('utf-8'))
-        if messageLength:
-            message = b''
-            print("\nMade it here 1")
-            while len(message) < messageLength:
-                temp_msg = connection.recv(messageLength - len(message))
-                message += temp_msg
+        conn , addr = host.accept() # Accepts and stores incoming conneciton
+        thread = threading.Thread(target = handle_client, args= (conn, addr, label_tuple,main_window)) 
+        thread.start() # Puts each client on own thread
+        print(f'[SERVER] NEW CONNECTION : {threading.active_count()-1} ACTIVE')
 
-            print("\nMade it here 2")
-            message = pickle.loads(message)
-            messageType = type(messageLength)
 
-            messageNumpy = np.frombuffer(buffer=message,dtype=np.byte)
-            decodedNumpy = cv2.imdecode(buf=messageNumpy,flags=1)
-            print("\nMade it here")
-            cv2.imshow("Arm_cam",decodedNumpy)
+def get_message(connection:socket.socket,split_rate:int)->bytes:
+    """
+    Parameters: Connection socket and split rate\n
+    Function: Calls socket.socket.recv() 'split rate' number of times\n\tand aggregates the message\n
+    Affects:Nothing\n
+    Returns: Returns the message in bytes
+    """
 
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                break
+    returnMessage = b''
 
-def start_server():
-    server = socket.socket(family=socket.AF_INET,type=socket.SOCK_STREAM)
-    server.bind(ADDR)
-    os.environ['QT_QPA_PLATFORM'] = 'wayland'
+    i = 0
+    while i < split_rate:
+        try:
+            msg_length = connection.recv(HEADER).decode(FORMAT)
+            msg_length = int(msg_length)
 
-    server.listen()
+            if msg_length:
+                msg = b''
 
-    print("[LISTENING ON SERVER] {}".format(socket.gethostbyname(socket.gethostname())))
+                while len(msg) < msg_length:
+                    msg += connection.recv(msg_length - len(msg))
+            
+                returnMessage += msg
+                i+=1
+        except:
+            print("Error")
 
-    while True:
-        connection, addr = server.accept()
-        thread = threading.Thread(target=handle_client,args=[connection,addr])
-        thread.start()
+    return returnMessage
 
-start_server()
+
+def create_main_window()->tuple:
+    """
+    Creates main window and a frame inside of that window\n
+    Creates three labels that in frame:\n
+    1. main-cam, 2. aruco-detected, 3. hand-camera\n
+    Returns labels as such: Tuple(main-cam, aruco-detected, hand-camera)
+    """
+
+    #create the main window in tkinter
+    mainWindow = Tk()
+    mainWindow.geometry(newGeometry="800x800")
+    mainWindow.title("SPEAR MAIN FEED")
+
+
+    #create the three labels that will be controlled
+    mainFeedLabel = Label(text="main feed",master=mainWindow,width=400,height=400,highlightbackground='red',highlightthickness=2)
+    arucoFeedLabel = Label(text="aruco feed",master=mainWindow,width=400,height=400,highlightbackground='green',highlightthickness=2)
+    handCameraLabel = Label(text="gripper feed",master=mainWindow,width=400,height=400,highlightbackground='blue',highlightthickness=2)
+    blankCameraLabel = Label(text="blank feed",master=mainWindow,width=400,height=400,highlightbackground='orange',highlightthickness=2)
+
+    #place the labels on the main window using grid
+    mainWindow.grid()
+    mainFeedLabel.grid(row=0,column=0)
+    arucoFeedLabel.grid(row=0,column=1)
+    handCameraLabel.grid(row=1,column=0)
+    blankCameraLabel.grid(row=1,column=1)
+    #mainWindow.mainloop()
+
+    return (mainFeedLabel,arucoFeedLabel,handCameraLabel,mainWindow)
+
+
+def update_label(label:Label,img:np.ndarray):
+    """
+    Takes in the label to update and the image to update with\n
+    Sets the label using the PIL library
+    Updates the frame
+    """
+    #rgb_image = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    pil_image = Image.fromarray(img)
+    image = ImageTk.PhotoImage(image=pil_image)
+    label.config(image=image)
+    label.image = image 
+
+
+def handle_client(conn:socket.socket , addr, label_tuple:tuple,main_window:Tk):
+    """
+    Takes the new connection and it's IP address.\n
+    Uses this send each connection to it's respective frame in the Tkinter frame
+    Updates the Tkingter frames in the respective frames
+    """
+    print(f'[SERVER] NEW CONNECTION AT {addr}')
+    connected = True ## False to end conn
+
+    while connected:
+        thread_msg_length = conn.recv(HEADER).decode(FORMAT)
+        thread_msg = conn.recv(int(thread_msg_length)).decode(FORMAT)
+        thread_msg = int(thread_msg)       
+
+        split_msg_length = conn.recv(HEADER).decode(FORMAT)
+        split_msg = conn.recv(int(split_msg_length)).decode(FORMAT)
+        split_msg = int(split_msg)
+
+        if split_msg:
+            msg = get_message(conn,split_msg)
+            try:
+                msg = pickle.loads(msg)
+
+                msg_type = type(msg)
+                if msg_type ==  str :
+                    if msg == DISMES:
+                        print(f'[CLIENT {addr}] DISCONNECTING')
+                        connected = False
+                    else:
+                        print(f'[CLIENT {addr}] {msg}')
+                elif msg_type == bytes:
+                    msg = np.frombuffer(msg,np.byte)
+                    msg = cv2.imdecode(msg, 1)
+                    pil_image = Image.fromarray(msg)
+                    image = ImageTk.PhotoImage(image=pil_image)
+                    label_tuple[0].config(image=image)
+                    label_tuple[0].image=image
+            except:
+                ok = 1
+            key = cv2.waitKey(1) & 0xFF
+            if key == ord('q'): ## if q is pressed disconnect
+                connected = False                
+    main_window.mainloop()
+    conn.close()
+    cv2.destroyAllWindows()
+    print(f"[SERVER] CLIENT {addr} DISCONNECTED")
+
+start()
+
+            
+

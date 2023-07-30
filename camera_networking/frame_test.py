@@ -22,7 +22,8 @@ def start():
     while True:
         ret, frame = camera.read()
         rgb_image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        image = ImageTk.PhotoImage(image=Image.fromarray(rgb_image))
+        image = Image.fromarray(rgb_image)
+        image = ImageTk.PhotoImage(image=image)
         mainFeedLabel.config(image=image)
 
         mainWindow.update()
