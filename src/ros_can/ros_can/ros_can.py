@@ -36,6 +36,7 @@ class Ros_2_Can(Node):
     def __init__(self):
         super().__init__('ros2can')
 
+        self.start_time = time.time()
         self.drive_msg_timestamp = time.time()
         self.steer_msg_timestamp = time.time()
         self.drive_msg = Float32MultiArray()
@@ -57,7 +58,7 @@ class Ros_2_Can(Node):
 
         self.node_id = 1 
 
-        timer_period = 0.1
+        timer_period = 0.01
 
         self.timer = self.create_timer(timer_period_sec = timer_period, callback = self.ros2can)
 
@@ -79,7 +80,7 @@ class Ros_2_Can(Node):
 
     def ros2can(self):
 
-        timeout = 1.0
+        timeout = 0.5
         
         # Convert ROS messages to CAN messages
         self.heartbeat()
@@ -187,12 +188,12 @@ class Ros_2_Can(Node):
         priority = 2    
         frame_id = 0x30
         arbitration_id = (priority << 24) | (frame_id << 8) | self.node_id
-        current_time = int(time.time() * 1000) & 0xFFFFFFFF
+        current_time = int((time.time() - self.start_time)*100)
+        print(current_time)
         current_time_bytes = struct.pack('i', current_time) 
         can_msg = can.Message(arbitration_id=arbitration_id, data=current_time_bytes, is_extended_id=True)
         self.can_publish([can_msg])
         
-
 
 def main(args=None):
     

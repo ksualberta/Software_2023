@@ -24,8 +24,12 @@ def generate_launch_description():
         package="moveit_servo",
         executable="servo_node_main",
         name='arm_servo',
-        parameters= [param_file,
-        moveit_config.robot_description_kinematics],
+        parameters= [
+        param_file,
+        moveit_config.robot_description_kinematics,
+        moveit_config.robot_description_semantic,
+        moveit_config.robot_description
+        ],
         arguments=['--ros-args', '--log-level', 'INFO'],
         output = 'screen',
         

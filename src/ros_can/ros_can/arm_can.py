@@ -23,7 +23,7 @@ Wrist Pitch  =
 """
 
 joint_traj_topic = "/Arm_Group_controller/joint_trajectory"
-joint_states_topics = "/joint_states"
+joint_states_topics = "/joint_states_arm"
 
 class Arm_2_Can(Node):
     def __init__(self):
@@ -35,14 +35,14 @@ class Arm_2_Can(Node):
 
         self.joint_state_msg = JointState()
 
-        self.joint_state_msg.name = ["Shoulder Roll", " Shoulder Pitch", "Elbow Roll", "Elbow Pitch", "Wrist Roll", "Wrist Pitch"]
+        self.joint_state_msg.name = ["Shoulder Roll", "Shoulder Pitch", "Elbow Roll", "Elbow Pitch", "Wrist Roll", "Wrist Pitch"]
         self.joint_state_msg.position = [0.0,0.0,0.0,0.0,0.0,0.0]
 
 
 
-        self.joint_traj_sub = self.create_subscription(msg_type = JointTrajectory, topic = joint_states_topics, qos_profile = rclpy.qos.qos_profile_system_default, callback= self.joint_traj_msg)
+        self.joint_traj_sub = self.create_subscription(msg_type = JointTrajectory, topic = joint_traj_topic, qos_profile = rclpy.qos.qos_profile_system_default, callback= self.joint_traj_msg)
         self.joint_state_pub = self.create_publisher(msg_type = JointState, topic = joint_states_topics, qos_profile = QoSProfile(depth=10))
-        self.bus = can.interface.Bus(interface='socketcan', channel='vcan0', bitrate=500000)
+        self.bus = can.interface.Bus(interface='socketcan', channel='can0', bitrate=1000000)
 
         timer_period = 0.1
 
@@ -53,23 +53,32 @@ class Arm_2_Can(Node):
         joint_names  = self.joint_state_msg.name
         self.joint_pos = []
         self.joint_vel = []
+        
         for joint in joint_names:
             self.joint_pos.append(self.joint_position_map(msg, joint))
             self.joint_vel.append(self.joint_velocity_map(msg, joint))
 
-        
+        print(self.joint_pos)
 
     
     def arm2can(self):
         joint_pos_can = self.pos_2_float32(self.joint_pos)
+        self.get_logger().warn("Pos Values")
         joint_vel_can = self.vel_2_float32(self.joint_vel)
+        self.get_logger().warn("Vel Val")
         
-        self.can_publsih(joint_pos_can)
-        self.can_publish(joint_vel_can)
+        self.can_publish(joint_pos_can)
+        #self.can_publish(joint_vel_can)
+        self.get_logger().warn("Vel Pub")
 
-        recv_msg = self.can_recive()
-        self.float32_2_pos(recv_msg)
-        self.Joint_State_Update()
+        #recv_msg = self.can_recive()
+        #self.get_logger().warn("Rec")
+        
+        #self.float32_2_pos(recv_msg)
+        #self.get_logger().warn("Rec COnv")
+        
+        #self.Joint_State_Update()
+        #self.get_logger().warn("Joint Updated")
 
 
     def pos_2_float32(self, joint_pos):
@@ -82,6 +91,7 @@ class Arm_2_Can(Node):
         for i in range(len(joint_pos)):
             arbitration_id = (priority << 24) | (frame_id << 8) | self.node_id
             position = joint_pos[i]
+            print(position)
             position_bytes = struct.pack('Bf', i+30, position)
 
             can_msg = can.Message(arbitration_id=arbitration_id, data=position_bytes, is_extended_id=True)
@@ -100,7 +110,7 @@ class Arm_2_Can(Node):
         for i in range(len(joint_vel)):
             arbitration_id = (priority << 24) | (frame_id << 8) | self.node_id
             velocity = joint_vel[i]
-            velocity_bytes = struct.pack('Bf', i+30, velocity)
+            velocity_bytes = struct.pack('Bf', i+40, velocity)
 
             can_msg = can.Message(arbitration_id=arbitration_id, data=velocity_bytes, is_extended_id=True)
             can_messages.append(can_msg)
@@ -125,10 +135,10 @@ class Arm_2_Can(Node):
     
     def can_recive(self):
 
+        self.get_logger().warn("Can Rec func ran")
         msg = self.bus.recv()
-
+        self.get_logger().warn("msg recived")
         return msg
-
 
 
     
