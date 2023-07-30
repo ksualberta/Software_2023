@@ -106,7 +106,7 @@ def create_main_window()->tuple:
     blankCameraLabel.grid(row=1,column=1)
     #mainWindow.mainloop()
 
-    return (mainFeedLabel,arucoFeedLabel,handCameraLabel,mainWindow)
+    return (mainFeedLabel,arucoFeedLabel,handCameraLabel,mainWindow,image)
 
 
 def update_label(label:Label,img:np.ndarray):
