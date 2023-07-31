@@ -20,7 +20,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'Ros_2_Can_Node = ros_can.ros_can:main'
+            'Ros_2_Can_Node = ros_can.ros_can:main',
+            'Arm_2_Can_node = ros_can.arm_can:main'
         ],
     },
 )
