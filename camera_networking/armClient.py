@@ -8,8 +8,8 @@ import time
 ##-----------------------------------------------------------------------------------------#
 ## CONSTANT VALUES
 PORT   = 7505
-#SERVER = "192.168.1.2" ## ez adress switch
-SERVER = socket.gethostbyname(socket.gethostname())
+SERVER = "192.168.1.2" ## ez adress switch
+#SERVER = socket.gethostbyname(socket.gethostname())
 THREAD = 2
 ADDR   = (SERVER , PORT) ## basic informaton for contacting server
 HEADER = 16 ## How big the header is on the incoming info
@@ -133,7 +133,7 @@ def send_data(client:socket.socket,msg_list:list,msg_len_list:list):
 
     thread_message = str(THREAD).encode(FORMAT)
     thread_message_len = str(len(thread_message)).encode(FORMAT)
-    thread_message_len = b' ' * (HEADER - len(thread_message_len))
+    thread_message_len += b' ' * (HEADER - len(thread_message_len))
     client.send(thread_message_len)
     client.send(thread_message)
 
