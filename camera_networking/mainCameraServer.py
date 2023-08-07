@@ -19,6 +19,9 @@ DISMES = '!END' ## Message to disconnect from server
 
 
 def start():
+    """
+    Creates the main window and creates another thread that runs inside of the mainloop
+    """
     os.environ["QT_QPA_PLATFORM"] = "xcb"
     print('[SERVER] STARTING UP')
     host = socket.socket(socket.AF_INET , socket.SOCK_STREAM) ## Creates stream type server
@@ -37,7 +40,6 @@ def start():
 
 
 def main_run(host,label_tuple,main_window:Tk):
-    connected = True
     while True:
         conn , addr = host.accept() # Accepts and stores incoming conneciton
         thread = threading.Thread(target = handle_client, args= (conn, addr, label_tuple,main_window))
@@ -52,7 +54,6 @@ def get_message(connection:socket.socket,split_rate:int)->bytes:
     Affects:Nothing\n
     Returns: Returns the message in bytes
     """
-
     returnMessage = b''
 
     i = 0
@@ -93,10 +94,10 @@ def create_main_window()->tuple:
     image = ImageTk.PhotoImage(image=pil_image)
 
     #create the three labels that will be controlled
-    mainFeedLabel = Label(image=image,master=mainWindow,width=rez[0],height=rez[1],highlightbackground='red',highlightthickness=2)
-    arucoFeedLabel = Label(image=image,master=mainWindow,width=rez[0],height=rez[1],highlightbackground='green',highlightthickness=2)
-    handCameraLabel = Label(image=image,master=mainWindow,width=rez[0],height=rez[1],highlightbackground='blue',highlightthickness=2)
-    blankCameraLabel = Label(image=image,master=mainWindow,width=rez[0],height=rez[1],highlightbackground='orange',highlightthickness=2)
+    mainFeedLabel = Label(image=image,master=mainWindow,width=rez[0],height=rez[1],highlightbackground='black',highlightthickness=2)
+    arucoFeedLabel = Label(image=image,master=mainWindow,width=rez[0],height=rez[1],highlightbackground='black',highlightthickness=2)
+    handCameraLabel = Label(image=image,master=mainWindow,width=rez[0],height=rez[1],highlightbackground='black',highlightthickness=2)
+    blankCameraLabel = Label(image=image,master=mainWindow,width=rez[0],height=rez[1],highlightbackground='black',highlightthickness=2)
 
     #place the labels on the main window using grid
 
@@ -119,7 +120,17 @@ def update_label(label:Label,img:np.ndarray):
     pil_image = Image.fromarray(rgb_image)
     image = ImageTk.PhotoImage(image=pil_image)
     label.config(image=image)
-    label.image = image 
+    label.image = image
+
+def update_label_in_error(label:Label):
+    """
+    Method only gets called if there is an exception
+    Resets the label arguments to the SPEAR logo
+    """
+    spear_logo = Image.open("Software_2023/camera_networking/placeholder.png")
+    image = ImageTk.PhotoImage(image=spear_logo)
+    label.config(image=image)
+    label.image = image
 
 
 def handle_client(conn:socket.socket , addr, label_tuple:tuple,main_window:Tk):
@@ -132,6 +143,7 @@ def handle_client(conn:socket.socket , addr, label_tuple:tuple,main_window:Tk):
     connected = True ## False to end conn
 
     while connected:
+
         thread_msg_length = conn.recv(HEADER).decode(FORMAT)
         thread_msg = conn.recv(int(thread_msg_length)).decode(FORMAT)
         thread_msg = int(thread_msg)       
@@ -148,6 +160,11 @@ def handle_client(conn:socket.socket , addr, label_tuple:tuple,main_window:Tk):
                 msg_type = type(msg)
                 if msg_type ==  str :
                     if msg == DISMES:
+                        if thread_msg == 1:
+                            update_label_in_error(label_tuple[0])
+                            update_label_in_error(label_tuple[1])
+                        elif thread_msg == 2:
+                            update_label_in_error(label_tuple[2])
                         print(f'[CLIENT {addr}] DISCONNECTING')
                         connected = False
                     else:
@@ -164,21 +181,21 @@ def handle_client(conn:socket.socket , addr, label_tuple:tuple,main_window:Tk):
 
                         if type(ids) == type(None):
                             update_label(label_tuple[0],msg)
-                            #cv2.imshow("RECIVEDVIDEO", msg)
                         else:
                             for id in ids:
                                 print("[DETECED MARKER]: {}\n".format(id))
                                 editedFrame = aruco.drawDetectedMarkers(image=msg.copy(),corners=corners,ids=ids)
-                                update_label(label_tuple[1],msg)
-                                #cv2.imshow("DETECTED IMAGE",editedFrame)
+                                update_label(label_tuple[1],editedFrame)
                     
                     elif thread_msg == 2:
                         update_label(label_tuple[2],msg)
                     main_window.update()
             except:
-                ok = 1
-            key = cv2.waitKey(1) & 0xFF
-            if key == ord('q'): ## if q is pressed disconnect
+                if thread_msg == 1:
+                    update_label_in_error(label_tuple[0])
+                    update_label_in_error(label_tuple[1])
+                elif thread_msg == 2:
+                    update_label_in_error(label_tuple[2])
                 connected = False
     conn.close()
     cv2.destroyAllWindows()

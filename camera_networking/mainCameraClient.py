@@ -9,12 +9,12 @@ import time
 ## CONSTANT VALUES
 PORT   = 7505
 #SERVER = "192.168.1.2" ## ez adress switch
-SERVER = "192.168.1.2"
+SERVER = socket.gethostbyname(socket.gethostname())
 THREAD = 1
 ADDR   = (SERVER , PORT) ## basic informaton for contacting server
 HEADER = 16 ## How big the header is on the incoming info
 FORMAT = 'utf-8' ## Format of the bytes used
-DISMES = '!END' ## Message to disconnect from server
+DISMISS = '!END' ## Message to disconnect from server
 JPEGQUALITY = 25 ## Quality of image outgoing 0-100
 ENCODEPARAM = [int(cv2.IMWRITE_JPEG_QUALITY), JPEGQUALITY]
 
@@ -30,9 +30,34 @@ REZ = SD
 
 CAMID = 0 ## ID of camera, depends on how many devices you have
 
+def send_EOS(connection:socket.socket):
+    """
+    Message that will send end of stream message to server\n
+    If message is unable to send, meaning connection is broken\n
+    In this case, will simply shut down
+    """
+    dismiss_msg = DISMISS.encode('utf-8')
+    dismiss_msg_length = str(len(dismiss_msg)).encode('utf-8')
+    dismiss_msg_length += b' ' * (HEADER - len(dismiss_msg_length))
+
+    try:
+        connection.send(dismiss_msg_length)
+        connection.send(dismiss_msg)
+    except Exception:
+        print("Couldn't send a message: {message}\n".format(message = Exception))
+
+
+
+
 ##-----------------------------------------------------------------------------------------#
 ## START
 def start():
+    """
+    Starting point for program\n
+    Can throw an except if the client doesn't connect or looses connection\n
+    Can throw an except if reading a camera frame doesn't work\n
+    Calls send_EOS() to handle exceptions\n
+    """
     print('[CLIENT] STARTING UP')
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client.connect(ADDR)
@@ -42,6 +67,7 @@ def start():
         video_send(camera , client)
     except Exception as ext:
         print('[CLIENT] ERROR, DISCONNECTING')
+        send_EOS(client)
         print(ext)
         #sendData(client, 'ERROR OCURRED')
         #sendData(client, DISMES)
