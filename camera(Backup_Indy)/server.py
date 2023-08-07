@@ -1,65 +1,86 @@
 import gi
+import sys
 import time
-from threading import Thread
-import subprocess
+from gi.repository import GLib
+
 
 gi.require_version('Gst', '1.0')
-from gi.repository import Gst, GLib
+from gi.repository import Gst, GObject
 
-# Initialize GStreamer
-Gst.init(None)
+devices = ["/dev/video2"]  # Add your device paths here
 
-# The IP address of your receiving device (laptop/client)
-laptop_ip = 'YOUR_LAPTOP_IP'
+def bus_call(bus, message, loop, pipeline):
+    t = message.type
+    if t == Gst.MessageType.EOS:
+        sys.stdout.write("End-of-stream\n")
+        loop.quit()
+    elif t == Gst.MessageType.ERROR:
+        err, debug = message.parse_error()
+        sys.stderr.write("Error: %s: %s\n" % (err, debug))
+        pipeline.set_state(Gst.State.NULL)
+        time.sleep(1)  # Wait a bit before trying to recover
+        pipeline.set_state(Gst.State.PLAYING)  # Try to recover
+    return True
 
-# The port numbers to use for each camera
-ports = [5000, 5001, 5002, 5003]
+def create_pipeline(device, port):
+    # Create GStreamer pipeline
+    pipeline = Gst.Pipeline()
 
-# The /dev/videoX device numbers for each camera
-device_numbers = [0, 1, 2, 3]
+    # Create elements
+    src = Gst.ElementFactory.make("v4l2src", None)
+    src.set_property("device", device)
+    enc = Gst.ElementFactory.make("x264enc", None)
+    rtppay = Gst.ElementFactory.make("rtph264pay", None)
+    srtclientsink = Gst.ElementFactory.make("srtclientsink", None)
+    local_sink = Gst.ElementFactory.make("autovideosink", None)
 
-pipelines = []
+    # Set element properties
+    srtclientsink.set_property("mode", 0)
+    srtclientsink.set_property("uri", f"srt://192.168.1.1:{7000}")
 
-def create_pipeline(device_number, port):
-    pipeline_str = (f'v4l2src device=/dev/video{device_number} ! '
-                    'videoconvert ! x264enc tune=zerolatency ! '
-                    f'rtph264pay ! udpsink host={laptop_ip} port={port}')
-    pipeline = Gst.parse_launch(pipeline_str)
+    srtclientsink.set_property("latency", 200)
 
-    bus = pipeline.get_bus()
-    bus.add_signal_watch()
-    bus.connect('message::error', on_error, pipeline)
+    # Add elements to pipeline and link them
+    pipeline.add(src)
+    pipeline.add(enc)
+    pipeline.add(rtppay)
+    pipeline.add(srtclientsink)
+    
+
+    src.link(enc)
+    enc.link(rtppay)
+    rtppay.link(srtclientsink)
+    
 
     return pipeline
 
-def on_error(bus, message, pipeline):
-    print(f"Error on pipeline for device /dev/video{pipeline.device_number}. Restarting...")
-    pipeline.set_state(Gst.State.NULL)
-    time.sleep(1)
-    pipeline.set_state(Gst.State.PLAYING)
+def main(argv):
+ 
+    Gst.init(None)
 
-for device_number, port in zip(device_numbers, ports):
-    pipeline = create_pipeline(device_number, port)
-    pipeline.device_number = device_number  # Store the device number for error handling
-    pipelines.append(pipeline)
+    loop = GLib.MainLoop()
 
-def network_monitor():
-    while True:
-        try:
-            subprocess.check_call(['ping', '-c', '1', laptop_ip], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            time.sleep(10)
-        except subprocess.CalledProcessError:
-            print('Network down. Restarting pipelines...')
-            for pipeline in pipelines:
-                pipeline.set_state(Gst.State.NULL)
-                time.sleep(1)
-                pipeline.set_state(Gst.State.PLAYING)
-            time.sleep(5)  # Wait for a while before checking again
+    pipelines = []
+    for i, device in enumerate(devices):
+        pipeline = create_pipeline(device, 7000 + i)  # Use a different port for each camera
+        pipelines.append(pipeline)
 
-monitor_thread = Thread(target=network_monitor)
-monitor_thread.start()
+        # Set up message handling
+        bus = pipeline.get_bus()
+        bus.add_signal_watch()
+        bus.connect("message", bus_call, loop, pipeline)  # Pass pipeline to bus_call
 
-for pipeline in pipelines:
-    pipeline.set_state(Gst.State.PLAYING)
+        # Start pipeline
+        pipeline.set_state(Gst.State.PLAYING)
 
-GLib.MainLoop().run()
+    try:
+        loop.run()
+    except:
+        pass
+
+    # Clean up
+    for pipeline in pipelines:
+        pipeline.set_state(Gst.State.NULL)
+
+if __name__ == '__main__':
+    sys.exit(main(sys.argv))

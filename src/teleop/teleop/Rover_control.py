@@ -64,7 +64,7 @@ class RoverControl(Node):
         self.joy_sub = self.create_subscription(msg_type = Joy, topic = joy_topic, qos_profile = rclpy.qos.qos_profile_system_default, callback= self.JoystickMsg)
 
         
-        timer_period = 0.1
+        timer_period = 0.05
 
         self.last_toggle_time = time.time()
         self.steer_lock_state = True
@@ -237,7 +237,13 @@ class RoverControl(Node):
 
     def trigger_map(self, value):
 
-        return (value + 1) / 2
+        x_min = -1.0
+        x_max = 1.0
+        y_min = 0.0
+        y_max = 0.55
+
+        return y_min + (value - x_min) * (y_max - y_min) / (x_max - x_min)
+        
     
 
 def main(args=None):
