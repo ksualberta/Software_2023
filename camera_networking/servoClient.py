@@ -20,6 +20,8 @@ def start(x_speed:int,y_speed:int):
         if input=="k":
             message = "END"
             connected = False
+        elif input == "p":
+            message = "PANO"
         elif input == "right":
             message = "-{}/x".format(x_speed)
         elif input == "left":
@@ -40,7 +42,6 @@ def start(x_speed:int,y_speed:int):
             client.send(message)
 
 
-start(x_speed=2.5,y_speed=5) #speed should be in angle measures
-
+start(x_speed=2.5,y_speed=2.5) #speed should be in angle measures
 
 
