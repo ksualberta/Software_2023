@@ -7,7 +7,7 @@ from gi.repository import GLib
 gi.require_version('Gst', '1.0')
 from gi.repository import Gst, GObject
 
-ports = [7000]  # Add the ports you are using
+devices = ["/dev/video0"]  # Add your device paths here
 
 def bus_call(bus, message, loop, pipeline):
     t = message.type
@@ -22,44 +22,47 @@ def bus_call(bus, message, loop, pipeline):
         pipeline.set_state(Gst.State.PLAYING)  # Try to recover
     return True
 
-def create_pipeline(port):
+def create_pipeline(device, port):
     # Create GStreamer pipeline
     pipeline = Gst.Pipeline()
 
     # Create elements
-    srtserversrc = Gst.ElementFactory.make("srtserversrc", None)
-    rtpdepay = Gst.ElementFactory.make("rtph264depay", None)
-    dec = Gst.ElementFactory.make("avdec_h264", None)
-    conv = Gst.ElementFactory.make("videoconvert", None)
-    sink = Gst.ElementFactory.make("autovideosink", None)
+    src = Gst.ElementFactory.make("v4l2src", None)
+    src.set_property("device", device)
+    enc = Gst.ElementFactory.make("x264enc", None)
+    rtppay = Gst.ElementFactory.make("rtph264pay", None)
+    srtclientsink = Gst.ElementFactory.make("srtclientsink", None)
+    local_sink = Gst.ElementFactory.make("autovideosink", None)
 
     # Set element properties
-    srtserversrc.set_property("uri", f"srt:192.168.1.2//:{port}")
-    srtserversrc.set_property("mode", 2)  # Listener mode
+    srtclientsink.set_property("mode", 0)
+    srtclientsink.set_property("uri", f"srt://localhost:{7401}")
+
+    srtclientsink.set_property("latency", 200)
 
     # Add elements to pipeline and link them
-    pipeline.add(srtserversrc)
-    pipeline.add(rtpdepay)
-    pipeline.add(dec)
-    pipeline.add(conv)
-    pipeline.add(sink)
+    pipeline.add(src)
+    pipeline.add(enc)
+    pipeline.add(rtppay)
+    pipeline.add(srtclientsink)
+    
 
-    srtserversrc.link(rtpdepay)
-    rtpdepay.link(dec)
-    dec.link(conv)
-    conv.link(sink)
+    src.link(enc)
+    enc.link(rtppay)
+    rtppay.link(srtclientsink)
+    
 
     return pipeline
 
 def main(argv):
-    
+ 
     Gst.init(None)
 
     loop = GLib.MainLoop()
 
     pipelines = []
-    for i, port in enumerate(ports):
-        pipeline = create_pipeline(port)  # Use a different port for each camera
+    for i, device in enumerate(devices):
+        pipeline = create_pipeline(device, 7000 + i)  # Use a different port for each camera
         pipelines.append(pipeline)
 
         # Set up message handling

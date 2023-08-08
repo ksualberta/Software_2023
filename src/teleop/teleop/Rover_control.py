@@ -239,7 +239,7 @@ class RoverControl(Node):
 
         x_min = -1.0
         x_max = 1.0
-        y_min = 0.0
+        y_min = 0.00
         y_max = 0.55
 
         return y_min + (value - x_min) * (y_max - y_min) / (x_max - x_min)
