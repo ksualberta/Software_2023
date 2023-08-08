@@ -4,19 +4,36 @@ import subprocess
 from piservo import Servo
 import numpy as np
 import cv2
+import pickle
 
 PORT = 5050
 HEADER = 64 #the size of the buffer that declares the size of the buffer for the incoming message
 SERVER = "0.0.0.0"
 INTERNAL_SERVER = "192.168.1.2"
 INTERNAL_PORT = 9050
+EXTERNAL_SERVER = "192.168.1.1"
+EXTERNAL_PORT = 9050
 ADDR = (SERVER,PORT)
 INTERNAL_ADDR = (INTERNAL_SERVER,INTERNAL_PORT)
+EXTERNAL_ADDR = (EXTERNAL_SERVER,EXTERNAL_PORT)
 
 servo_x = Servo(12)
 servo_y = Servo(13)
 servo_x_angle = 0
 servo_y_angle = 0
+
+def send_stiched_image(stiched_image:np.ndarray)->None:
+    """
+    Creates a client to deliver the stiched image to the base station\n
+
+    """
+    external_client = socket.socket(family=socket.AF_INET,type=socket.SOCK_STREAM)
+    msg = pickle.dumps(stiched_image)
+    msg_length = str(len(msg)).encode('utf-8')
+    msg_length += b' ' * (HEADER - len(msg_length))
+
+    external_client.send(msg_length)
+    external_client.send(msg)
 
 def stitch_images(images:list)->np.ndarray:
     """
@@ -38,12 +55,13 @@ def stitch_images(images:list)->np.ndarray:
         return stiched_image
     
 
-def enter_panoramic_mode():
+def enter_panoramic_mode()->np.ndarray:
     """
     Creates a client and connects to the main camera client internally\n
     Sends signal to main camera to close the feed so this scrip can take control\n
     Enters panaramic mode and takes pictures and saves them at intervals\n
     Utilizes openCV to stich together saved images and saves them\n
+    Returns the stiched image
     """
 
     #connecting to the server running in the main camera client script listening for messages
@@ -137,7 +155,8 @@ def handle_client(connection:socket.socket,address):
             if message == "END":
                 connected = False
             elif message == "PANO":
-                enter_panoramic_mode()
+                stiched_image = enter_panoramic_mode()
+                send_stiched_image(stiched_image)
             else:
                 print("\nSending {} to send_servo_signal()".format(message))
                 send_servo_signal(message)
