@@ -197,8 +197,7 @@ def handle_client(conn:socket.socket , addr, label_tuple:tuple,main_window:Tk):
                 elif thread_msg == 2:
                     update_label_in_error(label_tuple[2])
                 connected = False
-    conn.close()
-    cv2.destroyAllWindows()
+    conn.shutdown(socket.SHUT_RDWR)
     print(f"[SERVER] CLIENT {addr} DISCONNECTED")
 
 start()

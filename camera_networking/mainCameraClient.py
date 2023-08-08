@@ -3,6 +3,7 @@ import cv2
 import pickle
 import numpy as np
 import time
+import threading
 #import matplotlib
 
 ##-----------------------------------------------------------------------------------------#
@@ -13,10 +14,16 @@ SERVER = socket.gethostbyname(socket.gethostname())
 THREAD = 1
 ADDR   = (SERVER , PORT) ## basic informaton for contacting server
 HEADER = 16 ## How big the header is on the incoming info
+INTERNAL_SERVER = "0.0.0.0"
+INTERNAL_PORT = 9050
+INTERNAL_ADDR = (INTERNAL_SERVER,INTERNAL_PORT)
 FORMAT = 'utf-8' ## Format of the bytes used
 DISMISS = '!END' ## Message to disconnect from server
 JPEGQUALITY = 25 ## Quality of image outgoing 0-100
 ENCODEPARAM = [int(cv2.IMWRITE_JPEG_QUALITY), JPEGQUALITY]
+
+CAMERA_STATUS = True #used to control the camera status, used by the internal server to control the camera
+
 
 SPLIT_RATE = 1
 
@@ -48,14 +55,13 @@ def send_EOS(connection:socket.socket):
 
 
 
-
-##-----------------------------------------------------------------------------------------#
-## START
 def start():
     """
     Starting point for program\n
-    Can throw an except if the client doesn't connect or looses connection\n
-    Can throw an except if reading a camera frame doesn't work\n
+    Can catch an exception if the client doesn't connect or looses connection\n
+    Can catch an exception if reading a camera frame doesn't work\n
+    Calls cam_set() internally to set the camera, which returns the camera\n
+    Calls video_send() to continuously send data to the server\n
     Calls send_EOS() to handle exceptions\n
     """
     print('[CLIENT] STARTING UP')
@@ -71,7 +77,8 @@ def start():
         print(ext)
         #sendData(client, 'ERROR OCURRED')
         #sendData(client, DISMES)
-        client.close()
+    
+    client.close()
 
 
 
@@ -89,18 +96,24 @@ def cam_set(camID, rez, client):
 
 ##-----------------------------------------------------------------------------------------#
 ## VIDEOSEND - Intakes a camera and a server connection
-def video_send(camera , client):
-    while camera.isOpened():
-        img, frame = camera.read()
-        if img == True:
+def video_send(camera:cv2.VideoWriter , client:socket.socket):
+    """
+    Reads frames from camera as long as CAMERA_STATUS is true\n
+    Encodes the frame as bytes\n
+    Internally calls split_and_send_data(client,frame,SPLIT_RATE)\n
+    """
+    while CAMERA_STATUS:
+        ret, frame = camera.read()
+        if ret == True:
             frame = cv2.imencode('.jpg', frame, ENCODEPARAM)[1].tobytes()
             #frame =  frame.tobytes()
-            split_data(client, frame, SPLIT_RATE)           
+            split_and_send_data(client, frame, SPLIT_RATE)
+    camera.release()
+    split_and_send_data(client=client,msg=DISMISS,split_rate=SPLIT_RATE)
+    client.shutdown(socket.SHUT_WR)
 
 
-##-----------------------------------------------------------------------------------------#
-## SEND - Intakes data and sends to server
-def split_data(client:socket.socket, msg:bytes, split_rate:int)-> None:
+def split_and_send_data(client:socket.socket, msg:bytes, split_rate:int)-> None:
     """
     Parameters: Client, message, and split rate\n
     Function: Splits the messages into 'split rate' number of messages and message lengths\n
@@ -168,5 +181,49 @@ def send_data(client:socket.socket,msg_list:list,msg_len_list:list):
         i+=1
 
 
+def handle_internal_client(connection:socket.socket):
+    """
+    Used to handle internal client\n
+    Stops the camera when the STOP command is recieved\n
+    Start the camera when the START command is recieved\n
+    """
+    global CAMERA_STATUS
 
+    connected = True
+
+    while connected:
+        msg_length = int(connection.recv(HEADER).decode('utf-8'))
+
+        if msg_length:
+            msg = b''
+
+            while len(msg) < msg_length:
+                msg += connection.recv(msg_length - len(msg))
+
+            msg = msg.decode('utf-8')
+
+            if msg == "STOP":
+                CAMERA_STATUS = False
+            else:
+                CAMERA_STATUS = True
+                connected = False
+
+    connection.shutdown(socket.SHUT_RDWR)
+
+def start_internal_server():
+    """
+    Starts the internal server that will receive commands from the servo Server\n
+    """
+    #creates the internal server and starts listening
+    internal_server = socket.socket(family=socket.AF_INET,type=socket.SOCK_STREAM)
+    internal_server.bind(INTERNAL_ADDR)
+    internal_server.listen()
+
+    while True:
+        connection,addr = internal_server.accept()
+        print("\n[CONNECTED INTERNAL CLIENT]: {}".format(addr))
+        thread = threading.Thread(target="",args=[])
+        thread.joi
+        
 start()
+start_internal_server()
