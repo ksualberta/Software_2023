@@ -2,6 +2,8 @@ import socket
 import threading
 import subprocess
 from piservo import Servo
+import numpy as np
+import cv2
 
 PORT = 5050
 HEADER = 64 #the size of the buffer that declares the size of the buffer for the incoming message
@@ -15,6 +17,26 @@ servo_x = Servo(12)
 servo_y = Servo(13)
 servo_x_angle = 0
 servo_y_angle = 0
+
+def stitch_images(images:list)->np.ndarray:
+    """
+    Inputs the list of images to stich together\n
+    Preproccesses the image and stiches them together\n
+    Returns the stiched image
+    """
+    sticher = cv2.Stitcher.create()
+
+    #resize images to be consistent
+    for image in images:
+        image = cv2.resize(image,(1280,720))
+
+    (stitch_status,stiched_image) = sticher.stitch(images=images)
+
+    if stitch_status != cv2.STITCHER_OK:
+        return None
+    else:
+        return stiched_image
+    
 
 def enter_panoramic_mode():
     """
@@ -36,7 +58,28 @@ def enter_panoramic_mode():
     #compute sizes and send start_message to the server
     start_msg_len = str(len(start_message)).encode('utf-8')
     start_msg_len += b' ' * (HEADER - len(start_msg_len))
+    internal_client.send(start_msg_len)
+    internal_client.send(start_message)
 
+    print("\n[STARTING CAMERA]\n")
+
+    #reset servos to maintain a good image
+    reset_servos()
+
+    i = 1 #turn the servo eight times, 22.5 degrees each, which translates to 45 degrees for the camera
+    num_rotations = 8
+    angle_change = 22.5
+
+    #start camera
+    camera = cv2.VideoCapture(0)
+    image_list = list()
+    while i <= num_rotations:
+        ret, frame = camera.read()
+        image_list.append(frame)
+        send_servo_signal("+{}/x".format(angle_change))
+        i+=1
+
+    stiched_image = stitch_images(images=image_list)
 
 def reset_servos():
     """

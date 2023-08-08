@@ -91,8 +91,8 @@ def cam_set(camID, rez, client):
 ## VIDEOSEND - Intakes a camera and a server connection
 def video_send(camera , client):
     while camera.isOpened():
-        img, frame = camera.read()
-        if img == True:
+        ret, frame = camera.read()
+        if ret == True:
             frame = cv2.imencode('.jpg', frame, ENCODEPARAM)[1].tobytes()
             #frame =  frame.tobytes()
             split_data(client, frame, SPLIT_RATE)           
