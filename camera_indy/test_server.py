@@ -34,7 +34,7 @@ def main():
     signal.signal(signal.SIGTERM, shutdown)
 
     pipeline = Gst.parse_launch(
-        "videotestsrc pattern=snow animation-mode=running-time is-live=true ! x264enc! mpegtsmux !"
+        "v4l2src device=/dev/video0 ! x264enc! mpegtsmux !"
         "srtserversink uri=srt://:5000/"
     )
 
