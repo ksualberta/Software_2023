@@ -34,9 +34,11 @@ def main():
     signal.signal(signal.SIGTERM, shutdown)
 
     pipeline = Gst.parse_launch(
-        "v4l2src device=/dev/video4 ! video/x-h264,width=1920.height=1080,framerate=30/1 !"
-        " srtserversink uri=srt://:5000/"
-    )
+    "v4l2src device=/dev/video2 ! video/x-h264,width=1920,height=1080,framerate=30/1 !"
+    " srtserversink uri=srt://192.168.1.3:7013/"
+)
+
+
 
     pipeline.set_state(Gst.State.PLAYING)
 
