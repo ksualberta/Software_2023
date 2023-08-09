@@ -25,7 +25,7 @@ def main():
     signal.signal(signal.SIGTERM, shutdown)
 
     pipeline = Gst.parse_launch(
-        "srtclientsrc uri=srt://127.0.0.1:5000/ ! queue ! tsparse ! tsdemux ! decodebin ! glimagesink"
+        "srtsrc uri=srt://192.168.1.3:7013?mode=listener ! decodebin ! autovideosink"
     )
 
     pipeline.set_state(Gst.State.PLAYING)
