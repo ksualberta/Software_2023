@@ -7,19 +7,32 @@ Gst.init(None)
 
 pipeline = None
 
+Logitech_Brio_Port = ""
+Aduacam_Port = "" 
+
 def shutdown(signum, frame):
-    global pipeline, loop
+    global logitech_brio, loop, arducam1
     print("\nShutting down...")
     
     # Send EOS to the pipeline
-    pipeline.send_event(Gst.Event.new_eos())
+    # Stop the pipelines
+    logitech_brio.set_state(Gst.State.NULL)
+    arducam1.set_state(Gst.State.NULL)
     
-    # Give it some time to handle the EOS
-    GLib.timeout_add(300, lambda: pipeline.set_state(Gst.State.NULL))
-    GLib.timeout_add(500, lambda: loop.quit())
+    # Stop the main loop
+    loop.quit()
+
+def on_message(bus, message, pipeline):
+    if message.type == Gst.MessageType.EOS:
+        print("EOS received")
+        shutdown(None, None)
+    elif message.type == Gst.MessageType.ERROR:
+        err, debug = message.parse_error()
+        print(f"Error: {err}, {debug}")
+        shutdown(None, None)
 
 def main():
-    global pipeline, loop
+    global logitech_brio, loop, arducam1
 
     signal.signal(signal.SIGINT, shutdown)
     signal.signal(signal.SIGTERM, shutdown)
@@ -28,11 +41,24 @@ def main():
 #        "srtsrc uri=srt://192.168.1.3:7030?mode=listener&latency=200 ! decodebin ! autovideosink"
 #    )
 
-    pipeline = Gst.parse_launch(
-        "srtsrc uri=srt://192.168.1.3:7040?mode=listener&latency=200 ! jpegdec ! autovideosink"
+    logitech_brio = Gst.parse_launch(
+        "srtsrc uri=srt://192.168.1.3:" + Logitech_Brio_Port + "?mode=listener&latency=200 ! jpegdec ! autovideosink"
+    )
+    
+    arducam1 = Gst.parse_launch(
+        "srtsrc uri=srt://192.168.1.3:" + Aduacam_Port + "?mode=listener&latency=200 ! jpegdec ! autovideosink"
     )
 
-    pipeline.set_state(Gst.State.PLAYING)
+    logitech_brio.set_state(Gst.State.PLAYING)
+    arducam1.set_state(Gst.State.PLAYING)
+
+    logitech_brio_bus = logitech_brio.get_bus()
+    logitech_brio_bus.add_signal_watch()
+    logitech_brio_bus.connect("message", on_message, logitech_brio)
+
+    arducam1_bus = arducam1.get_bus()
+    arducam1_bus.add_signal_watch()
+    arducam1_bus.connect("message", on_message, arducam1)
 
     loop = GLib.MainLoop()
     try:
@@ -40,7 +66,8 @@ def main():
     except:
         pass
 
-    pipeline.set_state(Gst.State.NULL)
+    logitech_brio.set_state(Gst.State.NULL)
+    arducam1.set_state(Gst.State.NULL)
 
 if __name__ == "__main__":
     main()
