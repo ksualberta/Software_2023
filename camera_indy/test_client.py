@@ -24,8 +24,12 @@ def main():
     signal.signal(signal.SIGINT, shutdown)
     signal.signal(signal.SIGTERM, shutdown)
 
+#    pipeline = Gst.parse_launch(
+#        "srtsrc uri=srt://192.168.1.3:7030?mode=listener&latency=200 ! decodebin ! autovideosink"
+#    )
+
     pipeline = Gst.parse_launch(
-        "srtsrc uri=srt://192.168.1.3:7013?mode=listener ! decodebin ! autovideosink"
+        "srtsrc uri=srt://192.168.1.3:7040?mode=listener&latency=200 ! jpegdec ! autovideosink"
     )
 
     pipeline.set_state(Gst.State.PLAYING)
