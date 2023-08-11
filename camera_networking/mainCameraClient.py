@@ -9,7 +9,7 @@ import threading
 ##-----------------------------------------------------------------------------------------#
 ## CONSTANT VALUES
 PORT   = 7505
-SERVER = "192.168.1.1" ## ez adress switch
+SERVER = "192.168.1.3" ## ez adress switch
 #SERVER = socket.gethostbyname(socket.gethostname())
 THREAD = 1
 ADDR   = (SERVER , PORT) ## basic informaton for contacting server

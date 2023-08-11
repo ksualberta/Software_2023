@@ -1,7 +1,7 @@
 import requests
 from tkinter import *
 import re
-import plotly.express as px
+#import plotly.express as px
 import matplotlib.pyplot as plt
 import time
 from PIL import ImageTk,Image
