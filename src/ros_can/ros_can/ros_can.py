@@ -54,7 +54,7 @@ class Ros_2_Can(Node):
 
         self.joy_data = self.create_subscription(msg_type = Joy, topic = joy_topic, qos_profile = rclpy.qos.qos_profile_system_default, callback= self.joymsg)
 
-        self.bus = can.interface.Bus(interface='socketcan', channel='vcan0', bitrate=500000)
+        self.bus = can.interface.Bus(interface='socketcan', channel='can0', bitrate=1000000)
 
         self.node_id = 1 
 

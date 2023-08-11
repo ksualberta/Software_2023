@@ -8,8 +8,8 @@ import time
 ##-----------------------------------------------------------------------------------------#
 ## CONSTANT VALUES
 PORT   = 7505
-#SERVER = "192.168.1.2" ## ez adress switch
-SERVER = socket.gethostbyname(socket.gethostname())
+SERVER = "192.168.1.1" ## ez adress switch
+#SERVER = socket.gethostbyname(socket.gethostname())
 THREAD = 2
 ADDR   = (SERVER , PORT) ## basic informaton for contacting server
 HEADER = 16 ## How big the header is on the incoming info
@@ -26,9 +26,9 @@ FHD = (1080 , 1920) ## STANDARD MONITOR
 QHD = (1440 , 2560) ## NOT WORK
 UHD = (2160 , 3840) ## NOT WORK
 
-REZ = SD
+REZ = HD
 
-CAMID = 1 ## ID of camera, depends on how many devices you have
+CAMID = 4 ## ID of camera, depends on how many devices you have
 
 def send_EOS(connection:socket.socket):
     """
