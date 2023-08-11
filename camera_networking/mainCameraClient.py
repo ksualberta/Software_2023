@@ -9,7 +9,7 @@ import threading
 ##-----------------------------------------------------------------------------------------#
 ## CONSTANT VALUES
 PORT   = 7505
-SERVER = "192.168.1.1" ## ez adress switch
+SERVER = "192.168.1.3" ## ez adress switch
 #SERVER = socket.gethostbyname(socket.gethostname())
 THREAD = 1
 ADDR   = (SERVER , PORT) ## basic informaton for contacting server
@@ -69,6 +69,11 @@ def start():
     client.connect(ADDR)
     print(f'[CLIENT] CONNECTED TO {SERVER}, {PORT}')
     camera = cam_set(CAMID, REZ, client)
+
+    print("[STARTING INTERNAL SERVER THREAD]")
+    internal_server_thread = threading.Thread(target=start_internal_server)
+    internal_server_thread.start()
+
     try:
         video_send(camera , client)
     except Exception as ext:
@@ -188,7 +193,7 @@ def handle_internal_client(connection:socket.socket):
     Start the camera when the START command is recieved\n
     """
     global CAMERA_STATUS
-
+    
     connected = True
 
     while connected:
@@ -215,6 +220,7 @@ def start_internal_server():
     Starts the internal server that will receive commands from the servo Server\n
     """
     #creates the internal server and starts listening
+    print("\n[STARTED INTERNAL SERVER]")
     internal_server = socket.socket(family=socket.AF_INET,type=socket.SOCK_STREAM)
     internal_server.bind(INTERNAL_ADDR)
     internal_server.listen()
@@ -222,8 +228,8 @@ def start_internal_server():
     while True:
         connection,addr = internal_server.accept()
         print("\n[CONNECTED INTERNAL CLIENT]: {}".format(addr))
-        thread = threading.Thread(target="",args=[])
-        thread.joi
+        thread = threading.Thread(target=handle_internal_client,args=[connection])
+        thread.start()
         
 start()
 #start_internal_server()

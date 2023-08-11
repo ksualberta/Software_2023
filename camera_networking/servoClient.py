@@ -3,7 +3,7 @@ import keyboard
 import random
 
 PORT = 5050
-SERVER = "172.20.10.2"
+SERVER = socket.gethostbyname(socket.gethostname())
 ADDR = (SERVER,PORT)
 
 

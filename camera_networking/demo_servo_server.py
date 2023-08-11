@@ -1,7 +1,6 @@
 import socket
 import threading
 import subprocess
-from piservo import Servo
 import numpy as np
 import cv2
 import pickle
@@ -10,7 +9,7 @@ import time
 PORT = 5050
 HEADER = 64 #the size of the buffer that declares the size of the buffer for the incoming message
 SERVER = "0.0.0.0"
-INTERNAL_SERVER = "192.168.1.2"
+INTERNAL_SERVER = socket.gethostbyname(socket.gethostname())
 INTERNAL_PORT = 9050
 EXTERNAL_SERVER = "192.168.1.1"
 EXTERNAL_PORT = 9050
@@ -18,46 +17,8 @@ ADDR = (SERVER,PORT)
 INTERNAL_ADDR = (INTERNAL_SERVER,INTERNAL_PORT)
 EXTERNAL_ADDR = (EXTERNAL_SERVER,EXTERNAL_PORT)
 
-servo_x = Servo(12)
-servo_y = Servo(13)
-servo_x_angle = 0
-servo_y_angle = 0
-
-def send_stiched_image(stiched_image:np.ndarray)->None:
-    """
-    Creates a client to deliver the stiched image to the base station\n
-    Disconnects the client after sending the stiched image
-    """
-    print("\n[CONNECTED TO BASE STATION TO SEND IMAGE]")
-
-    external_client = socket.socket(family=socket.AF_INET,type=socket.SOCK_STREAM)
-    msg = pickle.dumps(stiched_image)
-    msg_length = str(len(msg)).encode('utf-8')
-    msg_length += b' ' * (HEADER - len(msg_length))
-
-    external_client.send(msg_length)
-    external_client.send(msg)
-    print("[SENT IMAGE]")
 
 
-def stitch_images(images:list)->np.ndarray:
-    """
-    Inputs the list of images to stich together\n
-    Preproccesses the image and stiches them together\n
-    Returns the stiched image
-    """
-    sticher = cv2.Stitcher.create()
-
-    #resize images to be consistent
-    for image in images:
-        image = cv2.resize(image,(1280,720))
-
-    (stitch_status,stiched_image) = sticher.stitch(images=images)
-
-    if stitch_status != cv2.STITCHER_OK:
-        return None
-    else:
-        return stiched_image
     
 def demo_data(message:str):
     print("\n{}\n".format(message))
@@ -94,7 +55,7 @@ def enter_panoramic_mode()->np.ndarray:
     print("\n[STARTING CAMERA]\n")
 
     #reset servos to maintain a good image
-    reset_servos()
+    #reset_servos()
 
     i = 1 #turn the servo eight times, 22.5 degrees each, which translates to 45 degrees for the camera
     num_rotations = 8
@@ -106,7 +67,6 @@ def enter_panoramic_mode()->np.ndarray:
     while i <= num_rotations:
         ret, frame = camera.read()
         image_list.append(frame)
-        send_servo_signal("+{}/x".format(angle_change))
         i+=1
     
     camera.release()
@@ -120,55 +80,7 @@ def enter_panoramic_mode()->np.ndarray:
     print("\n[DISCONNECTING FROM INTERNAL SERVER...]")
     internal_client.shutdown(socket.SHUT_WR) #shutdown writing side
     print("\n[SUCCESSFULLY DISCONNECTED]")
-
-    return stitch_images(images=image_list)
-
-def reset_servos():
-    """
-    Used to reset the servo angles to 0 for each
-    """
-    servo_x.write(0)
-    servo_y.write(0)
-
-def send_servo_signal(message:str):
-    """
-    Sends angle measures to the servo\n
-    If a command is send that exceeds limits, resets limits\n
-    """
-    global servo_x_angle
-    global servo_y_angle
-
-    messageList = message.split("/") #splits on the "/" to give the angle change in [0] and in axis in [1]
-    angle_change = float(messageList[0])
-    print("[X-ANGLE]: {}".format(servo_x_angle))
-    print("[Y-ANGLE]: {}".format(servo_y_angle))
-    print(["[CHANGE-ANGLE]: {}".format(angle_change)])
-    match messageList[1]:
-        case "x":
-            servo_x_angle += angle_change
-            try:
-                servo_x.write(servo_x_angle)
-            except:
-                if servo_x_angle < 0:
-                    servo_x.write(0)
-                    servo_x_angle = 0
-                else:
-                    servo_x.write(180)
-                    servo_x_angle = 180
-        case "y":
-            servo_y_angle += angle_change
-            try:
-                servo_y.write(servo_y_angle)
-            except:
-                if servo_y_angle < 0:
-                    servo_y.write(0)
-                    servo_y_angle = 0
-                else:
-                    servo_y.write(180)
-                    servo_y_angle = 180
-            
-    print("Message recieved")
-    return
+    return image_list
 
 def handle_client(connection:socket.socket,address):
     connected = True
@@ -180,7 +92,6 @@ def handle_client(connection:socket.socket,address):
                 connected = False
             elif message == "PANO":
                 stiched_image = enter_panoramic_mode()
-                send_stiched_image(stiched_image)
             else:
                 print("\nSending {} to send_servo_signal()".format(message))
                 demo_data(message)
@@ -200,8 +111,6 @@ def start_server():
     Creates the server that listens for the servo\n
     Creates a new thread for each connection
     """
-    subprocess.call(['sudo','pigpiod']) #pigpiod is a utility which launches the pigpio library as a daemon.
-    reset_servos()
     server = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
     server.bind(ADDR)
     server.listen()
@@ -214,3 +123,4 @@ def start_server():
         thread.start()
 
 start_server()
+
