@@ -7,8 +7,8 @@ Gst.init(None)
 
 pipeline = None
 
-Logitech_Brio_Port = ""
-Aduacam_Port = "" 
+Logitech_Brio_Port = "7060"
+Aduacam_Port = "7050" 
 
 def shutdown(signum, frame):
     global logitech_brio, loop, arducam1
