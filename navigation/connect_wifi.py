@@ -52,8 +52,6 @@ def return_coordinates_altitude(response_body:str):
 def start():
     try_connection()
     response = return_response_body()
-    print(response.text)
-    print(type(response.text))
     coordinates,altitude = return_coordinates_altitude(response.text)
     print(coordinates)
 
