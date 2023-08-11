@@ -5,7 +5,8 @@ from gi.repository import Gst, GLib
 
 Gst.init(None)
 
-pipeline = None
+arducam1 = None
+logitech_brio = None
 Logitech_Brio_ID = "4"
 Logitech_Brio_Port = "7060"
 Aduacam_ID = "2"
