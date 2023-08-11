@@ -18,8 +18,11 @@ ADDR = (SERVER,PORT)
 INTERNAL_ADDR = (INTERNAL_SERVER,INTERNAL_PORT)
 EXTERNAL_ADDR = (EXTERNAL_SERVER,EXTERNAL_PORT)
 
-servo_x = Servo(12)
-servo_y = Servo(13)
+#Use arrow keys for contorls 
+
+
+servo_x = Servo(12) #Servo Pin Numbers
+servo_y = Servo(13) #Servo Pin Numbers
 servo_x_angle = 0
 servo_y_angle = 0
 
@@ -178,13 +181,9 @@ def handle_client(connection:socket.socket,address):
             message = connection.recv(int(messageLength)).decode("utf-8")
             if message == "END":
                 connected = False
-            elif message == "PANO":
-                stiched_image = enter_panoramic_mode()
-                send_stiched_image(stiched_image)
             else:
                 print("\nSending {} to send_servo_signal()".format(message))
-                demo_data(message)
-                #send_servo_signal(message)
+                send_servo_signal(message)
 
 
     print("[ENDING CONNECTION]: {}".format(address))
