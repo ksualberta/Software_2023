@@ -1,19 +1,20 @@
 import subprocess
 import requests
 import re
-import threading
+import socket
 
 PORT = 9000
-SERVER = ""
-
+SERVER = "192.168.1.3"
+ADDR = (SERVER,PORT)
+HEADER = 64
 
 
 def try_connection():
     """
     Continously runs sudo command to connect to desired ssid
     """
-    ssid = "AP"
-    command = ['nmcli','device','wifi','connect',ssid,'password','Abhinav1']
+    ssid = "Isaac_Asimov"
+    command = ['nmcli','device','wifi','connect',ssid,]
 
     connected = False
 
@@ -30,7 +31,7 @@ def try_connection():
 
 def return_response_body():
     print("[Sending GET request to webpage]\n")
-    url = "http://192.168.1.1:5500/Software_2023/website_interface_example/"
+    url = "http://10.10.11.1:80"
     response = requests.get(url)
     print("[RECIEVED REQUEST]")
     return response
@@ -50,9 +51,18 @@ def return_coordinates_altitude(response_body:str):
     return (coordinates_without_direction,altitude)
 
 def start():
-    try_connection()
-    response = return_response_body()
-    coordinates,altitude = return_coordinates_altitude(response.text)
-    print(coordinates)
+    client = socket.socket(family=socket.AF_INET,type=socket.SOCK_STREAM)
+    client.connect(ADDR)
+    print("[CONNECTED TO SERVER AT {}]\n".format(PORT))
+    while True:
+        try_connection()
+        response = return_response_body()
+        coordinates,altitude = return_coordinates_altitude(response.text)
+        message = str(coordinates).encode('utf-8')
+        message_length = str(len(message)).encode('utf-8')
+        message_length += b' ' * (HEADER - len(message_length))
+
+        client.send(message_length)
+        client.send(message)
 
 start()
