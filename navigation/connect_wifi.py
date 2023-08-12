@@ -13,7 +13,7 @@ def try_connection():
     Continously runs sudo command to connect to desired ssid
     """
     ssid = "AP"
-    command = ['sudo','nmcli','device','wifi','connect',ssid,'password','Abhinav1']
+    command = ['nmcli','device','wifi','connect',ssid,'password','Abhinav1']
 
     connected = False
 
@@ -26,12 +26,13 @@ def try_connection():
             print("[Trying to Connect...]\n")
             connected = False
     
-    print("\n[Connected to ssid: {}\n]".format(ssid))
+    print("\n[Connected to ssid: {}]\n".format(ssid))
 
 def return_response_body():
     print("[Sending GET request to webpage]\n")
-    url = "http://10.10.11.1:80"
+    url = "http://192.168.1.1:5500/Software_2023/website_interface_example/"
     response = requests.get(url)
+    print("[RECIEVED REQUEST]")
     return response
 
 def return_coordinates_altitude(response_body:str):
@@ -51,4 +52,7 @@ def return_coordinates_altitude(response_body:str):
 def start():
     try_connection()
     response = return_response_body()
-    coordinates,altitude = return_coordinates_altitude(response)
+    coordinates,altitude = return_coordinates_altitude(response.text)
+    print(coordinates)
+
+start()

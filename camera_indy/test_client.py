@@ -1,6 +1,7 @@
 import gi
 import signal
 gi.require_version('Gst', '1.0')
+gi.require_version("GstApp", "1.0")
 from gi.repository import Gst, GLib
 import cv2
 import numpy as np
@@ -18,8 +19,8 @@ dictionary = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_6X6_250)
 parameters =  cv2.aruco.DetectorParameters()
 detector = cv2.aruco.ArucoDetector(dictionary, parameters)
 
-Logitech_Brio_Port = "7060"
-Aduacam_Port = "7050" 
+Logitech_Brio_Port = "8060"
+Aduacam_Port = "8050" 
 
 def shutdown(signum, frame):
     global logitech_brio, loop, arducam1
@@ -47,6 +48,7 @@ def gst_to_opencv(sample):
     """
     Converts Gstreamer sample to OpenCV image
     """
+    print("Conversion Running")
     buf = sample.get_buffer()
     caps = sample.get_caps()
     arr = np.ndarray(
@@ -63,6 +65,7 @@ def new_sample(appsink):
     """
     Callback to retrieve video frames from the appsink
     """
+    print("new sample Running")
     sample = appsink.emit("pull-sample")
     frame = gst_to_opencv(sample)
 
@@ -81,6 +84,8 @@ def process_frames():
     """
     while True:
         frame = frame_queue.get()
+        cv2.imshow('frame', frame)
+
         
                # ArUco marker detection
         corners, ids, rejectedCandidates = detector.detectMarkers(frame)
@@ -101,7 +106,7 @@ def main():
 
     logitech_brio = Gst.parse_launch(
         "srtsrc uri=srt://192.168.1.3:" + Logitech_Brio_Port + "?mode=listener&latency=200 ! jpegparse ! jpegdec\
-             ! tee name=t ! autovideosink t. ! appsink name=appsink0"
+             ! tee name=t ! queue ! autovideosink t. ! queue leaky=2 ! appsink name=sink emit-signals=true"
     )
     
     arducam1 = Gst.parse_launch(
@@ -119,9 +124,11 @@ def main():
     arducam1_bus.add_signal_watch()
     arducam1_bus.connect("message", on_message, arducam1)
 
-    appsink = logitech_brio.get_by_name("appsink0")
-    appsink.connect("new-sample", new_sample)
-    
+    print("Reached Appsink")
+
+
+    appsink = logitech_brio.get_by_name("sink")
+    handler_id = appsink.connect("new-sample", new_sample)
     worker_thread = threading.Thread(target=process_frames)
     worker_thread.daemon = True  # This allows the thread to exit when the main program exits
     worker_thread.start()
