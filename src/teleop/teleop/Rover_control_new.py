@@ -74,7 +74,7 @@ class RoverControl(Node):
     def __init__(self):
         super().__init__('rover_control')
         pygame.init()
-        pygame.display.set_mode((100, 100))
+        pygame.display.set_mode((300, 300))
         self.joystick_msg_timestamp = time.time()
 
 
