@@ -17,7 +17,7 @@ class JoyPublisher(Node):
         self.publisher_spear = self.create_publisher(msg_type = Joy, topic = '/SPEAR_Arm/Joy_Topic', qos_profile = QoSProfile(depth=10))
         self.publisher_rover = self.create_publisher(Joy, '/Rover/Joy_Topic', 10)
         self.threshold = 0.08 #Control threshold for stick 
-        self.timer = self.create_timer(0.005, self.publish_joystick_input)
+        self.timer = self.create_timer(0.05, self.publish_joystick_input)
 
     def get_joystick_input(self, joystick_id):
         # Get the specific joystick
@@ -46,7 +46,7 @@ class JoyPublisher(Node):
         joystick_input_spear = self.get_joystick_input(0)  # Assuming ID 0 for the SPEAR_Arm controller
         joystick_input_rover = self.get_joystick_input(1)  # Assuming ID 1 for the Rover_Arm controller
 
-        # Publish joystick inputs
+        # Publish joystick inpu
         self.publisher_spear.publish(joystick_input_spear)
         self.publisher_rover.publish(joystick_input_rover)
 

@@ -55,7 +55,7 @@ class Arm_Control(Node):
         self.joy_sub = self.create_subscription(msg_type = Joy, topic = Joy_Topic, qos_profile = rclpy.qos.qos_profile_system_default, callback= self.JoystickMsg)
         
         
-        timer_period = 0.1
+        timer_period = 0.5
 
         self.timer = self.create_timer(timer_period_sec = timer_period, callback = self.JoyMain)
         
