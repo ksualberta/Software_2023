@@ -26,6 +26,7 @@ def demoLocation():
     'Longitude': [-114.0708, -113.4909, -113.8113, -112.8418, -111.3809]
     }
     response = requests.get("http://127.0.0.1:5500/Software_2023/website_interface_example/index.html")
+    response.
     rootWindow = Tk()
     rootWindow.title("Sample Screen")
     rootWindow.geometry("680x480")

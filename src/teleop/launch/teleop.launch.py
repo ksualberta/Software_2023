@@ -17,10 +17,10 @@ def generate_launch_description():
     )
 
     rover_conv = TimerAction(
-        period = 3.0,
+        period = 5.0,
         actions = [Node(
                 package = 'teleop',
-                executable = 'Rover_Control_Node',
+                executable = 'Rover_New_Control',
         )]
     )
 
@@ -28,6 +28,8 @@ def generate_launch_description():
                 package = 'teleop',
                 executable ='Joystick_Input',
     )
+
+    
 
     return LaunchDescription([
            
