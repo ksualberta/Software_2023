@@ -8,9 +8,9 @@ Gst.init(None)
 arducam1 = None
 logitech_brio = None
 Logitech_Brio_ID = "4"
-Logitech_Brio_Port = "7060"
+Logitech_Brio_Port = "7011"
 Aduacam_ID = "2"
-Aduacam_Port = "7050"  
+Aduacam_Port = "7016"  
 
 
 def shutdown(signum, frame):
