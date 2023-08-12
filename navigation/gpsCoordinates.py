@@ -13,24 +13,29 @@ command = serial.Serial('/dev/ttyUSB0',4800, timeout=5 )
 
 client = socket.socket(family=socket.AF_INET,type=socket.SOCK_STREAM)
 client.connect(ADDR)
-#print("[CONNECTED TO SERVER AT {}]\n".format(PORT)) broken code
+print(f"[CONNECTED TO SERVER AT {PORT}]\n")
 
 def get_standard_coordinate(coordinate:str,direction:str)->str:
-    dd = float(coordinate[:2])
-    mm = float(coordinate[2:])
+    if not coordinate or len(coordinate) < 4 or direction not in ["N", "S", "E", "W"]:
+        return None  # Return None for invalid inputs
+    
+    try:
+        dd = float(coordinate[:2])
+        mm = float(coordinate[2:])
 
-    decimal_minutes = mm/60
+        decimal_minutes = mm / 60
+        decimate_coordinate = dd + decimal_minutes
 
-    decimate_coordinate = dd + decimal_minutes
+        if direction == "S" or direction == "W":
+            decimate_coordinate *= -1
 
-    if direction == "S" or direction == "W":
-        decimate_coordinate *= -1
-
-    return decimate_coordinate
+        return decimate_coordinate
+    except ValueError:
+        return None  
 
 while True:
-    input = command.readLine()
-    splitInputs = input.split(",")
+    input_data = command.readline().decode('ascii', errors='ignore').strip()
+    splitInputs = input_data.split(",")
 
     if splitInputs[0] == "$GPGGA":
         lat = splitInputs[2]
@@ -41,6 +46,16 @@ while True:
 
         lat = get_standard_coordinate(lat,lat_direction)
         longitude = get_standard_coordinate(longitude,long_direction)
+        if lat is None or longitude is None:
+            message = "Signal lost or invalid data received."
+            message = message.encode('utf-8')
+            message_length = str(len(message)).encode('utf-8')
+            message_length += b' ' * (HEADER - len(message_length))
+
+            client.send(message_length)
+            client.send(message)
+
+            continue 
         message = "({},{},{})".format(lat,longitude,altitude)
         message = message.encode('utf-8')
         message_length = str(len(message)).encode('utf-8')
