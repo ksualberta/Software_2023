@@ -1,7 +1,7 @@
 import socket
 import threading
 
-PORT = 9990
+PORT = 7021
 SERVER = "0.0.0.0"
 ADDR = (SERVER,PORT)
 HEADER = 64
@@ -9,7 +9,7 @@ HEADER = 64
 server = socket.socket(family=socket.AF_INET,type=socket.SOCK_STREAM)
 server.bind(ADDR)
 server.listen()
-print("[LISTENING AT SERVER {9990}]\n".format(PORT))
+
 
 def handle_client(connection:socket.socket):
     connected = True
