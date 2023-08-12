@@ -1,3 +1,5 @@
+#RUN ON MACBOOK
+
 import gi
 import signal
 gi.require_version('Gst', '1.0')
@@ -15,12 +17,12 @@ arducam1 = None
 
 frame_queue = queue.Queue(maxsize=10)
 
-dictionary = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_6X6_250)
-parameters =  cv2.aruco.DetectorParameters()
-detector = cv2.aruco.ArucoDetector(dictionary, parameters)
+#dictionary = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_6X6_250)
+#parameters =  cv2.aruco.DetectorParameters()
+#detector = cv2.aruco.ArucoDetector(dictionary, parameters)
 
-Logitech_Brio_Port = "8060"
-Aduacam_Port = "8050" 
+Logitech_Brio_Port = "7011"
+Aduacam_Port = "7016" 
 
 def shutdown(signum, frame):
     global logitech_brio, loop, arducam1
@@ -31,7 +33,7 @@ def shutdown(signum, frame):
     logitech_brio.set_state(Gst.State.NULL)
     arducam1.set_state(Gst.State.NULL)
     
-    cv2.destroyAllWindows()
+    #cv2.destroyAllWindows()
     # Stop the main loop
     loop.quit()
 
@@ -102,11 +104,9 @@ def main():
     signal.signal(signal.SIGINT, shutdown)
     signal.signal(signal.SIGTERM, shutdown)
 
-
-
     logitech_brio = Gst.parse_launch(
         "srtsrc uri=srt://192.168.1.3:" + Logitech_Brio_Port + "?mode=listener&latency=200 ! jpegparse ! jpegdec\
-             ! tee name=t ! queue ! autovideosink t. ! queue leaky=2 ! appsink name=sink emit-signals=true"
+             ! autovideosink"
     )
     
     arducam1 = Gst.parse_launch(
@@ -124,14 +124,14 @@ def main():
     arducam1_bus.add_signal_watch()
     arducam1_bus.connect("message", on_message, arducam1)
 
-    print("Reached Appsink")
+    #print("Reached Appsink")
 
 
-    appsink = logitech_brio.get_by_name("sink")
-    handler_id = appsink.connect("new-sample", new_sample)
-    worker_thread = threading.Thread(target=process_frames)
-    worker_thread.daemon = True  # This allows the thread to exit when the main program exits
-    worker_thread.start()
+    #appsink = logitech_brio.get_by_name("sink")
+    #handler_id = appsink.connect("new-sample", new_sample)
+    #worker_thread = threading.Thread(target=process_frames)
+    #worker_thread.daemon = True  # This allows the thread to exit when the main program exits
+    #worker_thread.start()
 
 
     loop = GLib.MainLoop()
@@ -142,8 +142,7 @@ def main():
 
     logitech_brio.set_state(Gst.State.NULL)
     arducam1.set_state(Gst.State.NULL)
-    cv2.destroyAllWindows()
+    #cv2.destroyAllWindows()
 
 if __name__ == "__main__":
     main()
-#working
