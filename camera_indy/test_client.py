@@ -1,6 +1,5 @@
 #RUN ON MACBOOK
 
-
 import gi
 import signal
 gi.require_version('Gst', '1.0')
