@@ -1,8 +1,11 @@
+#GET DATA FROM PI RUN ON PI
+#Run in Sudo
+
 import serial
 import socket
 
-PORT = 9990
-SERVER = "192.168.1.3"
+PORT = 7021
+SERVER = "192.168.1.4" #Linux VM
 ADDR = (SERVER,PORT)
 HEADER = 64
 
@@ -10,7 +13,7 @@ command = serial.Serial('/dev/ttyUSB0',4800, timeout=5 )
 
 client = socket.socket(family=socket.AF_INET,type=socket.SOCK_STREAM)
 client.connect(ADDR)
-print("[CONNECTED TO SERVER AT {}]\n".format(PORT))
+#print("[CONNECTED TO SERVER AT {}]\n".format(PORT)) broken code
 
 def get_standard_coordinate(coordinate:str,direction:str)->str:
     dd = float(coordinate[:2])
