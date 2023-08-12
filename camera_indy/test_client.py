@@ -1,3 +1,6 @@
+#RUN ON MACBOOK
+
+
 import gi
 import signal
 gi.require_version('Gst', '1.0')
@@ -15,12 +18,12 @@ arducam1 = None
 
 frame_queue = queue.Queue(maxsize=10)
 
-dictionary = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_6X6_250)
-parameters =  cv2.aruco.DetectorParameters()
-detector = cv2.aruco.ArucoDetector(dictionary, parameters)
+#dictionary = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_6X6_250)
+#parameters =  cv2.aruco.DetectorParameters()
+#detector = cv2.aruco.ArucoDetector(dictionary, parameters)
 
-Logitech_Brio_Port = "7070"
-Aduacam_Port = "7050" 
+Logitech_Brio_Port = "7011"
+Aduacam_Port = "7016" 
 
 def shutdown(signum, frame):
     global logitech_brio, loop, arducam1
@@ -31,7 +34,7 @@ def shutdown(signum, frame):
     logitech_brio.set_state(Gst.State.NULL)
     arducam1.set_state(Gst.State.NULL)
     
-    cv2.destroyAllWindows()
+    #cv2.destroyAllWindows()
     # Stop the main loop
     loop.quit()
 
@@ -102,8 +105,6 @@ def main():
     signal.signal(signal.SIGINT, shutdown)
     signal.signal(signal.SIGTERM, shutdown)
 
-
-
     logitech_brio = Gst.parse_launch(
         "srtsrc uri=srt://192.168.1.3:" + Logitech_Brio_Port + "?mode=listener&latency=200 ! jpegparse ! jpegdec\
              ! autovideosink"
@@ -142,8 +143,7 @@ def main():
 
     logitech_brio.set_state(Gst.State.NULL)
     arducam1.set_state(Gst.State.NULL)
-    cv2.destroyAllWindows()
+    #cv2.destroyAllWindows()
 
 if __name__ == "__main__":
     main()
-#working
