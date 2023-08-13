@@ -12,8 +12,9 @@ import queue
 
 Gst.init(None)
 
+HD_CAMERA_1 = None
+HD_CAMERA_2 = None
 logitech_brio = None
-arducam1 = None
 
 frame_queue = queue.Queue(maxsize=10)
 
@@ -21,17 +22,19 @@ frame_queue = queue.Queue(maxsize=10)
 #parameters =  cv2.aruco.DetectorParameters()
 #detector = cv2.aruco.ArucoDetector(dictionary, parameters)
 
-Logitech_Brio_Port = "7011"
-Aduacam_Port = "7016" 
+Logitech_Brio_Port = "7039"
+HD_CAMERA_1_Port = "7040"
+
 
 def shutdown(signum, frame):
-    global logitech_brio, loop, arducam1
+    global HD_CAMERA_1, loop, logitech_brio
     print("\nShutting down...")
     
     # Send EOS to the pipeline
     # Stop the pipelines
     logitech_brio.set_state(Gst.State.NULL)
-    arducam1.set_state(Gst.State.NULL)
+    HD_CAMERA_1.set_state(Gst.State.NULL)
+
     
     #cv2.destroyAllWindows()
     # Stop the main loop
@@ -46,10 +49,11 @@ def on_message(bus, message, pipeline):
         print(f"Error: {err}, {debug}")
         shutdown(None, None)
 
+"""
 def gst_to_opencv(sample):
-    """
+    
     Converts Gstreamer sample to OpenCV image
-    """
+    
     print("Conversion Running")
     buf = sample.get_buffer()
     caps = sample.get_caps()
@@ -64,9 +68,9 @@ def gst_to_opencv(sample):
 
 
 def new_sample(appsink):
-    """
+    
     Callback to retrieve video frames from the appsink
-    """
+    
     print("new sample Running")
     sample = appsink.emit("pull-sample")
     frame = gst_to_opencv(sample)
@@ -80,10 +84,12 @@ def new_sample(appsink):
 
     return Gst.FlowReturn.OK
 
+"""
+"""
 def process_frames():
-    """
+    
     Worker thread function to process frames from the queue
-    """
+    
     while True:
         frame = frame_queue.get()
         cv2.imshow('frame', frame)
@@ -97,9 +103,9 @@ def process_frames():
         # Display the frame with markers
         cv2.imshow('frame', frame_with_markers)
         cv2.waitKey(1)
-
+"""
 def main():
-    global logitech_brio, loop, arducam1
+    global HD_CAMERA_1, loop, logitech_brio, HD_CAMERA_2
 
     signal.signal(signal.SIGINT, shutdown)
     signal.signal(signal.SIGTERM, shutdown)
@@ -108,21 +114,27 @@ def main():
         "srtsrc uri=srt://192.168.1.3:" + Logitech_Brio_Port + "?mode=listener&latency=200 ! jpegparse ! jpegdec\
              ! autovideosink"
     )
-    
-    arducam1 = Gst.parse_launch(
-        "srtsrc uri=srt://192.168.1.3:" + Aduacam_Port + "?mode=listener&latency=200 ! decodebin ! autovideosink"
+    HD_CAMERA_1 = Gst.parse_launch(
+        "srtsrc uri=srt://192.168.1.3:" + HD_CAMERA_1_Port + "?mode=listener&latency=200 ! jpegparse ! jpegdec\
+             ! autovideosink"
     )
 
+    
+    
+
     logitech_brio.set_state(Gst.State.PLAYING)
-    arducam1.set_state(Gst.State.PLAYING)
+    HD_CAMERA_1.set_state(Gst.State.PLAYING)
+
 
     logitech_brio_bus = logitech_brio.get_bus()
     logitech_brio_bus.add_signal_watch()
     logitech_brio_bus.connect("message", on_message, logitech_brio)
 
-    arducam1_bus = arducam1.get_bus()
-    arducam1_bus.add_signal_watch()
-    arducam1_bus.connect("message", on_message, arducam1)
+    HD_CAMERA_1_bus = HD_CAMERA_1.get_bus()
+    HD_CAMERA_1_bus.add_signal_watch()
+    HD_CAMERA_1_bus.connect("message", on_message, HD_CAMERA_1)
+
+
 
     #print("Reached Appsink")
 
@@ -141,7 +153,7 @@ def main():
         pass
 
     logitech_brio.set_state(Gst.State.NULL)
-    arducam1.set_state(Gst.State.NULL)
+    HD_CAMERA_1.set_state(Gst.State.NULL)
     #cv2.destroyAllWindows()
 
 if __name__ == "__main__":
