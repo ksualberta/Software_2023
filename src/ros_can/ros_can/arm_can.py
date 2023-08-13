@@ -37,12 +37,14 @@ class Arm_2_Can(Node):
 
         self.joint_state_msg.name = ["Shoulder Roll", "Shoulder Pitch", "Elbow Roll", "Elbow Pitch", "Wrist Roll", "Wrist Pitch"]
         self.joint_state_msg.position = [0.0,0.0,0.0,0.0,0.0,0.0]
+        self.joint_pos = [0.0,0.0,0.0,0.0,0.0,0.0]
+        self.joint_vel = [0.0,0.0,0.0,0.0,0.0,0.0]
 
 
 
         self.joint_traj_sub = self.create_subscription(msg_type = JointTrajectory, topic = joint_traj_topic, qos_profile = rclpy.qos.qos_profile_system_default, callback= self.joint_traj_msg)
-        self.joint_state_pub = self.create_publisher(msg_type = JointState, topic = joint_states_topics, qos_profile = QoSProfile(depth=10))
-        self.bus = can.interface.Bus(interface='socketcan', channel='can0', bitrate=1000000)
+        #self.joint_state_pub = self.create_publisher(msg_type = JointState, topic = joint_states_topics, qos_profile = QoSProfile(depth=10))
+        self.bus = can.interface.Bus(interface='socketcan', channel='vcan0', bitrate=500000)
 
         timer_period = 0.1
 
@@ -50,26 +52,32 @@ class Arm_2_Can(Node):
 
     
     def joint_traj_msg(self, msg):
-        joint_names  = self.joint_state_msg.name
-        self.joint_pos = []
-        self.joint_vel = []
+        joint_names  = ["Shoulder Roll", "Shoulder Pitch", "Elbow Roll", "Elbow Pitch", "Wrist Roll", "Wrist Pitch"]
+        self.joint_pos = [0.0,0.0,0.0,0.0,0.0,0.0]
+        self.joint_vel = [0.0,0.0,0.0,0.0,0.0,0.0]
         
-        for joint in joint_names:
-            self.joint_pos.append(self.joint_position_map(msg, joint))
-            self.joint_vel.append(self.joint_velocity_map(msg, joint))
-
-        print(self.joint_pos)
+        for index in range(len(joint_names)):
+            self.joint_pos[index] = self.joint_position_map(msg, joint_names[index])
+            self.joint_vel[index] = self.joint_velocity_map(msg, joint_names[index])
 
     
     def arm2can(self):
-        joint_pos_can = self.pos_2_float32(self.joint_pos)
-        self.get_logger().warn("Pos Values")
-        joint_vel_can = self.vel_2_float32(self.joint_vel)
-        self.get_logger().warn("Vel Val")
         
-        self.can_publish(joint_pos_can)
+        try:
+            joint_pos_can = self.pos_2_float32(self.joint_pos)
+        
+        except:
+            self.get_logger().warn("Not able to get Position data")
+        #joint_vel_can = self.vel_2_float32(self.joint_vel)
+
+
+        try:
+            self.can_publish(joint_pos_can)
+
+        except:
+            self.get_logger().warn("Not able to Publish Message")
         #self.can_publish(joint_vel_can)
-        self.get_logger().warn("Vel Pub")
+        
 
         #recv_msg = self.can_recive()
         #self.get_logger().warn("Rec")
@@ -91,7 +99,7 @@ class Arm_2_Can(Node):
         for i in range(len(joint_pos)):
             arbitration_id = (priority << 24) | (frame_id << 8) | self.node_id
             position = joint_pos[i]
-            print(position)
+            
             position_bytes = struct.pack('Bf', i+30, position)
 
             can_msg = can.Message(arbitration_id=arbitration_id, data=position_bytes, is_extended_id=True)
