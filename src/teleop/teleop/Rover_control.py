@@ -64,7 +64,7 @@ class RoverControl(Node):
         self.joy_sub = self.create_subscription(msg_type = Joy, topic = joy_topic, qos_profile = rclpy.qos.qos_profile_system_default, callback= self.JoystickMsg)
 
         
-        timer_period = 0.05
+        timer_period = 0.1
 
         self.last_toggle_time = time.time()
         self.steer_lock_state = True
@@ -109,6 +109,7 @@ class RoverControl(Node):
         if self.joystick_msg.buttons[RIGHT_BUMPER] or self.joystick_msg.buttons[LEFT_BUMPER]:
 
             self.skid_steer_mode()
+            self.get_logger().warn("CRITICAL: Steer message data array doesn't have enough elements.")
 
         else:
             
@@ -207,21 +208,21 @@ class RoverControl(Node):
 
         if self.joystick_msg.buttons[LEFT_BUMPER]:
 
-            self.drive_cmds_msg.data[0] = -(skid_steer_speed)
-            self.drive_cmds_msg.data[1] = -(skid_steer_speed)
-            self.drive_cmds_msg.data[2] = -(skid_steer_speed)
-            self.drive_cmds_msg.data[3] = skid_steer_speed
-            self.drive_cmds_msg.data[4] = skid_steer_speed
-            self.drive_cmds_msg.data[5] = skid_steer_speed
+            self.drive_cmds_msg.data[0] = -0.5
+            self.drive_cmds_msg.data[1] = -0.5
+            self.drive_cmds_msg.data[2] = -0.5
+            self.drive_cmds_msg.data[3] = -0.3
+            self.drive_cmds_msg.data[4] = -0.3
+            self.drive_cmds_msg.data[5] = -0.3
 
         elif self.joystick_msg.buttons[RIGHT_BUMPER]:
 
-            self.drive_cmds_msg.data[0] = skid_steer_speed
-            self.drive_cmds_msg.data[1] = skid_steer_speed
-            self.drive_cmds_msg.data[2] = skid_steer_speed
-            self.drive_cmds_msg.data[3] = -(skid_steer_speed)
-            self.drive_cmds_msg.data[4] = -(skid_steer_speed)
-            self.drive_cmds_msg.data[5] = -(skid_steer_speed)
+            self.drive_cmds_msg.data[0] = -0.3
+            self.drive_cmds_msg.data[1] = -0.3
+            self.drive_cmds_msg.data[2] = -0.3
+            self.drive_cmds_msg.data[3] = -0.5
+            self.drive_cmds_msg.data[4] = -0.5
+            self.drive_cmds_msg.data[5] = -0.5
 
 
     def steer_toggle(self):
@@ -240,7 +241,7 @@ class RoverControl(Node):
         x_min = -1.0
         x_max = 1.0
         y_min = 0.00
-        y_max = 0.55
+        y_max = 1.0
 
         return y_min + (value - x_min) * (y_max - y_min) / (x_max - x_min)
         
