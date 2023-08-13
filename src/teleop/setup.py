@@ -27,7 +27,7 @@ setup(
             'Rover_Control_Node = teleop.Rover_control:main',
             'SPEAR_Arm_Node = teleop.Joystick_Arm:main',
             'Joystick_Input = teleop.Joy_Input:main',
-            'Rover_New_Control = teleop.Rover_control_new:main',
+            'Rover_New_Control = teleop.Rover_control:main',
             'Gripper_Control = teleop.Gripper:main'
         ],
     },
