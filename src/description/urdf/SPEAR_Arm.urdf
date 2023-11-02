@@ -1,19 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
      Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
-     For more information, please see http://wiki.ros.org/sw_urdf_exporter --
-     -------- parameterize the mass/lengths/collision box length? -------->
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter
+               parameterize the mass/lengths/collision box length?  -->
 <robot
   name="SPEAR_Arm">
+  <xacro:property name=”base_link_mass” value=”0.692524123906466” />
+  <xacro:property name=”base_link_collision_box_size” value=”0.128 0.128 0.07” />
+  <xacro:property name=”base_joint_mass” value=”1.47738507112296” />
+  <xacro:property name=”base_joint_collision_box_size” value=”0.121 0.11 0.11” />
+  <xacro:property name=”link_1_mass” value=”3.44363478464573” />
+  <xacro:property name=”link_1_collision_box_size” value=”0.14 0.08 0.055” />
+  <xacro:property name=”Shoulder_Pitch_limit_lower” value=”-1.0472” />
+  <xacro:property name=”Shoulder_Pitch_limit_upper” value=”3.6652” />
+  <xacro:property name=”link_2_mass” value=”1.5153745049325” />
+  <xacro:property name=”link_2_collision_box_size” value=”0.1 0.1 0.08” />
+  <xacro:property name=”Elbow_Pitch_limit_lower” value=”-2.7925” />
+  <xacro:property name=”Elbow_Pitch_limit_upper” value=”1.9722” />
+  <xacro:property name=”link_3_mass” value=”2.07375542707273” />
+  <xacro:property name=”link_3_collision_box_size” value=”0.21 0.08 0.084” /> 
+  <xacro:property name=”Elbow_Roll_limit_lower” value=”-3.1416” />
+  <xacro:property name=”Elbow_Roll_limit_upper” value=”3.1416” />
+  <xacro:property name=”link_4_mass” value=”1.56472201375409” /> 
+  <xacro:property name=”link_4_collision_box_size” value=”0.16 0.082 0.08” /> 
+  <xacro:property name=”Wrist_Pitch_limit_lower” value=”-2.7576” />
+  <xacro:property name=”Wrist_Pitch_limit_upper” value=”2.6704” /> 
+  <xacro:property name=”link_4_mass” value=”0.750967399035288” /> 
+  <xacro:property name=”link_5_collision_box_size” value=”0.16 0.08 0.14” /> 
+  <xacro:property name=”Wrist_Roll_limit_lower” value=”0” />
+  <xacro:property name=”Wrist_Roll_limit_upper” value=”0” />
+  <xacro:property name=”EEF_box_size” value=”0.02 0.02 0.02” />
+  <xacro:property name=”EEF_collision_box_size” value=”0.02 0.02 0.02” />
   <link
     name="base_link">
-    <xacro:property name=”base_link_mass” value=”0.692524123906466” />
     <inertial>
       <origin
         xyz="3.16799867477683E-17 9.21749145776317E-17 -0.00623708097620095"
         rpy="0 0 0" />
       <mass
-        value="0.692524123906466" />
+        value="${base_link_mass}" />
       <inertia
         ixx="0.00137416635128141"
         ixy="-3.33415978209264E-19"
@@ -41,7 +66,7 @@
         xyz="0 0 -0.015"
         rpy="0 0 0" />
       <geometry>
-        <box size = "0.128 0.128 0.07"/>
+        <box size = "${base_link_collision_box_size}"/>
       </geometry>
     </collision>
   </link>
@@ -52,7 +77,7 @@
         xyz="0.0396864881982836 -0.000199483171229487 0.000203916910570974"
         rpy="0 0 0" />
       <mass
-        value="1.47738507112296" />
+        value="${base_joint_mass}" />
       <inertia
         ixx="0.00173644836892209"
         ixy="5.04000250358313E-06"
@@ -80,7 +105,7 @@
         xyz="0 0 0.12"
         rpy="0 0 0" />
       <geometry>
-        <box size= "0.121 0.11 0.11"/>
+        <box size= "${base_joint_collision_box_size}"/>
       </geometry>
     </collision>
   </link>
@@ -104,7 +129,7 @@
         xyz="0.0201107904068754 -0.000699793106638869 -0.0571172260543161"
         rpy="0 0 0" />
       <mass
-        value="3.44363478464573" />
+        value="${link_1_mass}" />
       <inertia
         ixx="0.00845059338877604"
         ixy="1.52776594858077E-07"
@@ -132,7 +157,7 @@
         xyz="-0.16 -0.045 0"
         rpy="0 0 0" />
       <geometry>
-        <box size= "0.14 0.08 0.055"/>
+        <box size= "${link_1_collision_box_size}"/>
       </geometry>
     </collision>
   </link>
@@ -149,8 +174,8 @@
     <axis
       xyz="0 1 0" />
     <limit
-      lower="-1.0472"
-      upper="3.6652"
+      lower="${Shoulder_Pitch_limit_lower}"
+      upper="${Shoulder_Pitch_limit_upper}"
       effort="0"
       velocity="0" />
   </joint>
@@ -161,7 +186,7 @@
         xyz="0.00377731865823253 -1.08701091180302E-05 0.000137137871969006"
         rpy="0 0 0" />
       <mass
-        value="1.5153745049325" />
+        value="${link_2_mass}" />
       <inertia
         ixx="0.00151052573041459"
         ixy="4.318673973076E-10"
@@ -189,7 +214,7 @@
         xyz="0 0 0"
         rpy="0 0 0" />
       <geometry>
-        <box size= "0.1 0.1 0.08"/>
+        <box size= "${link_2_collision_box_size}"/>
       </geometry>
     </collision>
   </link>
@@ -206,8 +231,8 @@
     <axis
       xyz="0 1 0" />
     <limit
-      lower="-2.7925"
-      upper="1.9722"
+      lower="${Elbow_Pitch_limit_lower}"
+      upper="${Elbow_Pitch_limit_upper}"
       effort="0"
       velocity="0" />
   </joint>
@@ -218,7 +243,7 @@
         xyz="0.0654796463911018 -0.000151184620193826 -0.000160482278215801"
         rpy="0 0 0" />
       <mass
-        value="2.07375542707273" />
+        value="${link_3_mass}" />
       <inertia
         ixx="0.00161468452783234"
         ixy="1.97123090743411E-06"
@@ -246,7 +271,7 @@
         xyz="-0.17 0 0"
         rpy="0 0 0" />
       <geometry>
-        <box size= "0.21 0.08 0.084"/>
+        <box size= "${link_3_collision_box_size}"/>
       </geometry>
     </collision>
   </link>
@@ -263,8 +288,8 @@
     <axis
       xyz="1 0 0" />
     <limit
-      lower="-3.1416"
-      upper="3.1416"
+      lower="${Elbow_Roll_limit_lower}"
+      upper="${Elbow_Roll_limit_upper}"
       effort="0"
       velocity="0" />
   </joint>
@@ -275,7 +300,7 @@
         xyz="0.0665147333833135 6.57060609399601E-05 -0.00829151281291829"
         rpy="0 0 0" />
       <mass
-        value="1.56472201375409" />
+        value="${link_4_mass}" />
       <inertia
         ixx="0.00274365868526142"
         ixy="4.97483377943942E-08"
@@ -303,7 +328,7 @@
         xyz="0 0.085 0"
         rpy="0 0 0" />
       <geometry>
-        <box size= "0.16 0.082 0.08"/>
+        <box size= "${link_4_collision_box_size}"/>
       </geometry>
     </collision>
   </link>
@@ -320,8 +345,8 @@
     <axis
       xyz="0 1 0" />
     <limit
-      lower="-2.7576"
-      upper="2.6704"
+      lower="${Wrist_Pitch_limit_lower}"
+      upper="${Wrist_Pitch_limit_upper}"
       effort="0"
       velocity="0" />
   </joint>
@@ -360,7 +385,6 @@
         xyz="0.08 0 0"
         rpy="0 0 0" />
       <geometry>
-      <xacro:property name=”link_5_collision_box_size” value=”0.16 0.08 0.14” />
         <box size= "link_5_collision_box_size"/>
       </geometry>
     </collision>
@@ -378,14 +402,13 @@
     <axis
       xyz="1 0 0" />
     <limit
-      lower="0"
-      upper="0"
+      lower="${Wrist_Roll_limit_lower}"
+      upper="${Wrist_Roll_limit_upper}"
       effort="0"
       velocity="0" />
   </joint>
   <link
     name="EEF">
-    <xacro:property name=”EEF_box_size” value=”0.02 0.02 0.02” />
     <visual>
       <origin
         xyz="0 0 0"
@@ -400,7 +423,6 @@
       </material>
     </visual>
     <collision>
-    <xacro:property name=”EEF_collision_box_size” value=”0.02 0.02 0.02” />
       <origin
         xyz="0 0 0"
         rpy="0 0 0" />
