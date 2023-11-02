@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
      Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
-     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter --
+     -------- parameterize the mass/lengths/collision box length? -------->
 <robot
   name="SPEAR_Arm">
   <link
     name="base_link">
+    <xacro:property name=”base_link_mass” value=”0.692524123906466” />
     <inertial>
       <origin
         xyz="3.16799867477683E-17 9.21749145776317E-17 -0.00623708097620095"
@@ -358,7 +360,8 @@
         xyz="0.08 0 0"
         rpy="0 0 0" />
       <geometry>
-        <box size= "0.16 0.08 0.14"/>
+      <xacro:property name=”link_5_collision_box_size” value=”0.16 0.08 0.14” />
+        <box size= "link_5_collision_box_size"/>
       </geometry>
     </collision>
   </link>
@@ -382,12 +385,13 @@
   </joint>
   <link
     name="EEF">
+    <xacro:property name=”EEF_box_size” value=”0.02 0.02 0.02” />
     <visual>
       <origin
         xyz="0 0 0"
         rpy="0 0 0" />
       <geometry>
-          <box size= "0.02 0.02 0.02"/>
+          <box size= "${EEF_box_size}"/>
       </geometry>
       <material
         name="">
@@ -396,11 +400,12 @@
       </material>
     </visual>
     <collision>
+    <xacro:property name=”EEF_collision_box_size” value=”0.02 0.02 0.02” />
       <origin
         xyz="0 0 0"
         rpy="0 0 0" />
       <geometry>
-        <box size= "0.02 0.02 0.02"/>
+        <box size= "${EEF_collision_box_size}"/>
       </geometry>
     </collision>
   </link>
